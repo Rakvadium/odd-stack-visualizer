@@ -1,0 +1,295 @@
+html.dark {
+  --canvas: #111215;
+  --paper: #1a1b1f;
+  --ink: #ececef;
+  --ink-2: #c2c2c8;
+  --ink-3: #8e8e96;
+  --ink-4: #62626a;
+  --rule: #26282d;
+  --rule-2: #34363c;
+  --shadow-sm: 0 0 0 1px #2a2c31;
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.4), 0 0 0 1px #2f3136;
+  --shadow-lg: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px #2f3136;
+  --k-playbook: #4ade80;
+  --k-playbook-bg: rgba(74, 222, 128, 0.12);
+  --k-skill: #a78bfa;
+  --k-skill-bg: rgba(167, 139, 250, 0.14);
+  --k-principle: #fbbf24;
+  --k-principle-bg: rgba(251, 191, 36, 0.12);
+  --k-tool: #a1a1aa;
+  --k-tool-bg: rgba(161, 161, 170, 0.12);
+  --k-agent: #f472b6;
+  --k-agent-bg: rgba(244, 114, 182, 0.13);
+  --k-doc: #38bdf8;
+  --k-doc-bg: rgba(56, 189, 248, 0.12);
+  color-scheme: dark;
+}
+
+html.dark .md code { background: #26282d; }
+html.dark .md-pre { background: #141518; }
+html.dark .sheet-backdrop { background: rgba(0, 0, 0, 0.55); }
+html.dark .phase-list button:hover { background: #202126; }
+html.dark .trigger-list { background: #2a2c31; }
+
+/* ---------- scene and motion ---------- */
+
+.e { position: relative; height: 100%; overflow: hidden; background: #111215; color: var(--ink); }
+.scene { position: absolute; inset: 0; }
+.e .react-flow { --xy-background-color: #111215; opacity: 0; }
+.e .react-flow.is-ready { opacity: 1; }
+
+/* Leaving a scene: everything fades as the camera moves, so the swap underneath is invisible. */
+.scene .react-flow,
+.scene .e-head { transition: opacity 0.42s ease, filter 0.42s ease; }
+.scene.is-leaving-in .react-flow__node:not(.is-target),
+.scene.is-leaving-in .react-flow__edges { opacity: 0; transition: opacity 0.3s ease; }
+.scene.is-leaving-in .react-flow__node.is-target { animation: target-out 0.22s ease 0.4s forwards; }
+.scene.is-leaving-in .is-target .n { border-color: #6b6d74; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 60px -20px var(--c, #fff); }
+@keyframes target-out { to { opacity: 0; } }
+.scene.is-leaving-out .react-flow { opacity: 0; transition-duration: 0.3s; }
+.scene.is-leaving-in .e-head,
+.scene.is-leaving-out .e-head { opacity: 0; transition-duration: 0.2s; }
+
+/* Arriving: cards rise in along the path, wires draw themselves after the card they leave. */
+@keyframes node-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+}
+
+@keyframes draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+}
+
+.e .react-flow:not(.is-ready) .n,
+.e .react-flow:not(.is-ready) .n-group,
+.e .react-flow:not(.is-ready) .wire { visibility: hidden; }
+
+.e .is-ready .n,
+.e .is-ready .n-group { animation: node-in 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both; animation-delay: var(--d, 0ms); }
+
+.e .is-ready .wire-core { stroke-dasharray: 1; animation: draw 0.55s cubic-bezier(0.4, 0, 0.2, 1) both; animation-delay: var(--wd, 0ms); }
+.e .is-ready .wire.is-dashed .wire-core { stroke-dasharray: 5 6; animation: fade-in 0.4s ease both; animation-delay: var(--wd, 0ms); }
+.e .is-ready .wire-glow { animation: fade-in 0.6s ease both; animation-delay: calc(var(--wd, 0ms) + 0.3s); }
+
+.e .no-enter .n,
+.e .no-enter .n-group,
+.e .no-enter .wire-core,
+.e .no-enter .wire-glow { animation: none; }
+
+.e .react-flow__node { cursor: pointer; transition: opacity 0.2s ease; }
+.e .react-flow__node.is-dim { opacity: 0.32; }
+.e .react-flow__node-group { cursor: default; }
+
+@media (prefers-reduced-motion: reduce) {
+  .e .is-ready .n, .e .is-ready .n-group, .e .is-ready .wire-core, .e .is-ready .wire-glow { animation: none; }
+}
+
+/* ---------- header ---------- */
+
+.e-head { position: absolute; top: 24px; left: 32px; z-index: 5; max-width: 620px; pointer-events: none; animation: fade-in 0.5s ease 0.15s both; }
+.e-head > * { pointer-events: auto; }
+.e-head h1 { margin: 6px 0 0; font-size: 32px; line-height: 1.15; font-weight: 720; letter-spacing: -0.028em; }
+.e-head p { margin: 8px 0 0; font-size: 15px; line-height: 1.5; color: var(--ink-2); }
+.e-head .e-example { font: 12.5px/1.5 var(--mono); color: var(--ink-3); }
+
+.e-crumbs { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; font-size: 13px; color: var(--ink-3); }
+.e-crumbs button { all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 7px; font-weight: 560; color: var(--ink-2); }
+.e-crumbs button:first-child { margin-left: -8px; }
+.e-crumbs button:hover { background: #202126; color: var(--ink); }
+.e-crumbs .is-trail::before, .e-crumbs span::before { content: "/"; margin-right: 10px; color: var(--ink-4); }
+.e-crumbs span { padding: 4px 0; }
+
+.e-actions { display: flex; align-items: center; gap: 14px; margin-top: 14px; }
+.e-read {
+  all: unset;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 13px;
+  border-radius: 9px;
+  background: #ececef;
+  color: #111215;
+  font-size: 13px;
+  font-weight: 620;
+}
+
+.e-read:hover { background: #fff; }
+.e-hint { font-size: 12px; color: var(--ink-4); }
+.e-hint kbd { font: 11px var(--mono); padding: 1px 5px; border-radius: 4px; border: 1px solid #34363c; color: var(--ink-3); margin-right: 4px; }
+
+/* ---------- nodes ---------- */
+
+.n {
+  position: relative;
+  width: 270px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: #1a1b1f;
+  border: 1px solid #2a2c31;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  color: #e7e7ea;
+  font-size: 13.5px;
+  line-height: 1.5;
+  transition: border-color 0.18s, box-shadow 0.18s, width 0.28s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.18s;
+}
+
+.react-flow__node:hover .n { border-color: #46484f; }
+
+.n-head { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 620; letter-spacing: -0.01em; color: #f4f4f5; }
+.n-head svg { color: #a1a1aa; flex: none; }
+.n-head.is-center, .is-center { justify-content: center; text-align: center; }
+.n-sub { margin: 6px 0 8px; font-size: 12.5px; color: #8e8e96; }
+
+.n-row { position: relative; display: flex; align-items: center; gap: 8px; margin: 0 -16px; padding: 7px 16px; color: #b9b9c0; }
+.n-row.is-out { justify-content: flex-end; text-align: right; }
+.n-row.is-in { justify-content: flex-start; }
+.n-row .n-count { min-width: 22px; padding: 0 6px; border-radius: 99px; background: #26282d; font: 600 11px/1.6 var(--mono); color: #8e8e96; text-align: center; }
+
+.n-status { display: flex; align-items: center; gap: 8px; margin: 8px 0 0; font-size: 12px; color: #8e8e96; }
+.n-pulse { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; animation: pulse 2.4s infinite; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.6); } 70%, 100% { box-shadow: 0 0 0 7px rgba(74, 222, 128, 0); } }
+
+.n-prompt { width: 300px; }
+.n-field { margin: 12px 0 4px; padding: 10px 12px; border-radius: 10px; background: #141518; border: 1px solid #26282d; font: 12.5px/1.55 var(--mono); color: #d4d4d8; }
+.n-caret { display: inline-block; width: 7px; height: 14px; margin-left: 2px; vertical-align: -2px; background: #d4d4d8; animation: blink 1.1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+.n-router { width: 440px; }
+.n-crown { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 8px; background: #fbbf24; color: #111215; }
+.n-crown svg { color: #111215; }
+.n-ports { display: grid; gap: 2px; margin-top: 4px; }
+.n-portrow { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.n-router .n-row span:not(.n-count) { white-space: nowrap; }
+
+.n-always { display: flex; gap: 10px; align-items: center; width: 260px; padding: 12px 14px; color: #a1a1aa; font-size: 12.5px; border-style: dashed; background: transparent; box-shadow: none; }
+.n-always b { display: block; color: #e7e7ea; font-size: 13.5px; }
+.n-always > span { flex: 1; }
+.react-flow__node:hover .n-always { border-style: solid; }
+
+/* groups and path cards */
+
+.n-group { position: relative; width: 100%; height: 100%; border-radius: 20px; background: rgba(255, 255, 255, 0.018); border: 1px solid #25272c; transition: border-color 0.2s, background 0.2s; }
+.react-flow__node-group:has(~ .react-flow__node:hover) .n-group { border-color: #2c2e33; }
+.n-group header { display: flex; align-items: baseline; gap: 10px; padding: 13px 16px 0; white-space: nowrap; overflow: hidden; }
+.n-group header .n-swatch { align-self: center; }
+.n-group header b { font-size: 14px; font-weight: 650; color: #f4f4f5; }
+.n-group header span:last-child { font-size: 12.5px; color: #74747c; overflow: hidden; text-overflow: ellipsis; }
+
+.n-swatch { width: 10px; height: 10px; border-radius: 3px; background: var(--c); box-shadow: 0 0 10px var(--c); flex: none; }
+
+.n-route { width: 250px; height: 132px; display: flex; flex-direction: column; padding: 14px 16px 12px; }
+.n-route::before { content: ""; position: absolute; inset: -1px; border-radius: inherit; border: 1px solid var(--c); opacity: 0; transition: opacity 0.18s; pointer-events: none; }
+.react-flow__node:hover .n-route { transform: translateY(-2px); box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5), 0 0 30px -12px var(--c); }
+.react-flow__node:hover .n-route::before { opacity: 0.7; }
+.n-route .n-foot { margin-top: auto; }
+.n-bolt { display: inline-grid; place-items: center; width: 18px; height: 18px; margin-left: auto; border-radius: 6px; background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
+.n-when { margin: 8px 0 0; font-size: 12.5px; line-height: 1.5; color: #a1a1aa; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+.n-dots { display: inline-flex; align-items: center; gap: 3px; }
+.n-dots i { width: 5px; height: 5px; border-radius: 50%; background: var(--c); opacity: 0.55; }
+.n-dots span { margin-left: 6px; }
+
+.n-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 12px; font-size: 12px; color: #74747c; }
+.n-open { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; color: #8e8e96; transition: color 0.15s, gap 0.15s; }
+.react-flow__node:hover .n-open { color: #f4f4f5; gap: 8px; }
+
+.is-far .n-route .n-when, .is-far .n-route .n-foot { display: none; }
+.is-far .n-route { justify-content: center; }
+.is-far .n-route .n-head { font-size: 24px; line-height: 1.2; }
+.is-far .n-group header b { font-size: 22px; }
+.is-far .n-group header span:last-child { display: none; }
+.is-far .n-router .n-row { font-size: 16px; }
+.is-far .n-router .n-head { font-size: 22px; }
+.is-far .n-router .n-sub { display: none; }
+
+/* path: entry, steps, callees, reply */
+
+.n-entry { display: flex; align-items: center; gap: 8px; width: auto; padding: 10px 14px; border-radius: 99px; font-size: 13px; color: #c2c2c8; white-space: nowrap; }
+.n-entry svg { color: #fbbf24; }
+
+.n-step { width: 300px; }
+.n-step.is-open { width: 460px; border-color: #6b6d74; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 0 4px rgba(236, 236, 239, 0.05); cursor: default; }
+.n-num { display: grid; place-items: center; flex: none; width: 26px; height: 26px; border-radius: 50%; background: #ececef; color: #111215; font: 700 12px var(--mono); }
+.n-title { line-height: 1.3; }
+.n-gist { margin: 8px 0 0; font-size: 13px; line-height: 1.5; color: #a1a1aa; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.n-gist.is-long { -webkit-line-clamp: 6; }
+.n-meta { display: inline-flex; gap: 10px; }
+
+.n-read { max-height: 360px; margin: 10px -6px 0 0; padding-right: 8px; overflow: auto; cursor: auto; user-select: text; font-size: 13.5px; line-height: 1.62; color: #c2c2c8; animation: fade-in 0.3s ease; }
+.n-read .md p { margin-bottom: 10px; }
+.n-lede { margin: 0 0 10px; color: #f4f4f5; font-size: 14px; }
+.n-read::-webkit-scrollbar { width: 6px; }
+.n-read::-webkit-scrollbar-thumb { background: #3a3c42; border-radius: 3px; }
+
+.n-principles { all: unset; cursor: pointer; font-size: 12px; font-weight: 550; color: #fbbf24; opacity: 0.85; }
+.n-principles:hover { opacity: 1; }
+
+.n-callee { width: 268px; padding: 10px 12px 10px 14px; border-radius: 12px; overflow: hidden; }
+.n-callee::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--c); box-shadow: 0 0 12px var(--c); }
+.n-callee.is-handoff { border-style: dashed; }
+.react-flow__node:hover .n-callee { border-color: color-mix(in srgb, var(--c) 55%, #2a2c31); }
+.n-callee-top { display: flex; align-items: center; gap: 8px; }
+.n-kind { font-size: 10.5px; font-weight: 650; letter-spacing: 0.08em; text-transform: uppercase; color: var(--c); }
+.n-also { font-size: 11px; color: #74747c; }
+.n-callee-main { display: flex; align-items: center; gap: 10px; margin-top: 2px; }
+.n-callee-main > span { flex: 1; min-width: 0; }
+.n-name { display: block; font-size: 14.5px; font-weight: 640; color: #f4f4f5; }
+.n-callee .n-gist { display: block; margin-top: 1px; font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; -webkit-line-clamp: unset; }
+
+.n-enter {
+  all: unset;
+  cursor: pointer;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 9px;
+  border-radius: 8px;
+  background: #24262b;
+  color: #c2c2c8;
+  font: 600 11.5px var(--mono);
+  transition: background 0.15s, color 0.15s;
+}
+
+.n-enter:hover { background: var(--c); color: #111215; }
+
+.n-reply { width: 280px; border-style: dashed; background: #16171a; }
+
+/* ---------- ports ---------- */
+
+.e .react-flow__handle.port {
+  width: 12px;
+  height: 12px;
+  min-width: 0;
+  min-height: 0;
+  border: 2.5px solid #111215;
+  background: var(--pc, #e4e4e7);
+  box-shadow: 0 0 0 1.5px #3a3c42;
+  cursor: default;
+  transition: box-shadow 0.2s;
+}
+
+.e .react-flow__node:hover .react-flow__handle.port { box-shadow: 0 0 0 1.5px #6b6d74, 0 0 12px var(--pc, #e4e4e7); }
+
+/* ---------- wires ---------- */
+
+.wire { transition: opacity 0.2s; }
+.wire-core { fill: none; stroke: var(--w); stroke-width: 2px; stroke-linecap: round; transition: stroke-width 0.15s; }
+.wire.is-strong .wire-core { stroke-width: 2.5px; }
+.wire-glow { fill: none; stroke: var(--w); stroke-width: 9px; opacity: 0.1; filter: blur(4px); transition: opacity 0.2s; }
+.wire.is-dim { opacity: 0.12; }
+.wire.is-lit .wire-glow { opacity: 0.45; }
+.wire.is-lit .wire-core { stroke-width: 3px; }
+
+/* ---------- controls ---------- */
+
+.e .react-flow__controls { box-shadow: 0 0 0 1px #2a2c31; border-radius: 10px; overflow: hidden; margin: 0 0 20px 20px; }
+.e .react-flow__controls-button { background: #1a1b1f; border-bottom: 1px solid #2a2c31; color: #c2c2c8; width: 30px; height: 30px; }
+.e .react-flow__controls-button:hover { background: #24262b; }
+.e .react-flow__controls-button svg { fill: currentColor; }

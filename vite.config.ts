@@ -1,14 +1,16 @@
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
 const root = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
+  plugins: [react()],
   server: {
-    host: "0.0.0.0",
     port: 5173,
     fs: { allow: [resolve(root, "..")] },
   },
-  preview: { host: "0.0.0.0", port: 4173 },
+  preview: { port: 4173 },
+  build: { chunkSizeWarningLimit: 1500 },
 });
