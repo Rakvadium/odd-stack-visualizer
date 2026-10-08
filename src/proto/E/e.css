@@ -82,7 +82,7 @@ html.dark .trigger-list { background: #2a2c31; }
 
 .e .react-flow__node { cursor: pointer; transition: opacity 0.2s ease; }
 .e .react-flow__node.is-dim { opacity: 0.32; }
-.e .react-flow__node-group { cursor: default; }
+.e .react-flow__node-group { cursor: default; background: transparent; border: 0; padding: 0; border-radius: 0; box-shadow: none; }
 
 @media (prefers-reduced-motion: reduce) {
   .e .is-ready .n, .e .is-ready .n-group, .e .is-ready .wire-core, .e .is-ready .wire-glow { animation: none; }
