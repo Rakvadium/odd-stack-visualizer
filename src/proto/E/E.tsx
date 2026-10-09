@@ -24,7 +24,10 @@ import { CanvasCtx, edgeTypes, nodeTypes } from "./nodes";
 import "./e.css";
 
 
-const OPEN_W = 460;
+const OPEN_W = 560;
+/** Where the open step's top-left corner sits on screen while walking. */
+const READ_X = 500;
+const READ_Y = 72;
 const EASE = (t: number) => 1 - Math.pow(1 - t, 3);
 
 export function E() {
@@ -110,52 +113,65 @@ function Scene({ flowKey }: { flowKey: EntityKey | null }) {
         expanded={expanded}
         setExpanded={setExpanded}
       />
-      <Header flowKey={flowKey} leave={leave} walk={() => setExpanded("s0")} walking={expanded !== null} />
-      {flowKey && <WalkBar flowKey={flowKey} at={expanded ? Number(expanded.slice(1)) : -1} go={(i) => setExpanded(i < 0 ? null : `s${i}`)} />}
+      {flowKey && expanded ? (
+        <WalkPanel flowKey={flowKey} at={Number(expanded.slice(1))} go={(i) => setExpanded(i < 0 ? null : `s${i}`)} />
+      ) : (
+        <Header flowKey={flowKey} leave={leave} walk={() => setExpanded("s0")} />
+      )}
     </div>
   );
 }
 
-/** Fixed controls for walking a path, so Next is always in the same place while the camera moves. */
-function WalkBar({ flowKey, at, go }: { flowKey: EntityKey; at: number; go: (index: number) => void }) {
+/**
+ * Walk mode takes over the header. The controls row sits above the title, so Previous and Next
+ * never move however long a step's name is. The open card always lands just right of this panel.
+ */
+function WalkPanel({ flowKey, at, go }: { flowKey: EntityKey; at: number; go: (index: number) => void }) {
   const { stack } = useProto();
   const stations = stack.flows.get(flowKey)!.stations;
-  const on = at >= 0;
+  const current = stations[at];
   const last = at === stations.length - 1;
-  const current = on ? stations[at] : null;
   return (
-    <div className={`walk${on ? " is-on" : ""}`} role="toolbar" aria-label="Walk the path" aria-hidden={!on}>
-      <button className="walk-btn" disabled={!on || at === 0} onClick={() => go(at - 1)} aria-label="Previous step" title="Previous step (←)">
-        <Icon name="back" size={14} />
+    <header className="e-head wk" aria-label="Walking the path">
+      <button className="wk-exit" onClick={() => go(-1)} title="Stop walking (esc)">
+        <Icon name="back" size={13} /> {nameOf(stack, flowKey)}
       </button>
-      <div className="walk-mid">
-        <ol className="walk-track">
-          {stations.map((s, i) => (
-            <li key={i} className={i === at ? "is-on" : i < at ? "is-past" : ""}>
-              <button onClick={() => go(i)} title={s.short} tabIndex={on ? 0 : -1}>
-                {s.label || i + 1}
-              </button>
-            </li>
-          ))}
-        </ol>
-        <div className="walk-now" aria-live="polite">
-          <small>
-            Step {current?.label || at + 1} of {stations.length}
-          </small>
-          <b>{current?.short}</b>
-        </div>
+      <div className="wk-controls" role="toolbar" aria-label="Step through the path">
+        <button className="wk-btn" disabled={at === 0} onClick={() => go(at - 1)} aria-label="Previous step" title="Previous step (←)">
+          <Icon name="back" size={15} />
+        </button>
+        <span className="wk-count" aria-live="polite">
+          Step <b>{current.label || at + 1}</b> of {stations.length}
+        </span>
+        <button className="wk-btn is-next" onClick={() => go(last ? -1 : at + 1)} title={last ? "Finish (esc)" : "Next step (→)"}>
+          {last ? "Finish" : "Next"} <Icon name={last ? "x" : "arrow"} size={14} />
+        </button>
       </div>
-      <button className="walk-btn is-next" disabled={!on} onClick={() => go(last ? -1 : at + 1)} title={last ? "Finish (esc)" : "Next step (→)"}>
-        {last ? "Done" : "Next"} <Icon name={last ? "x" : "arrow"} size={13} />
-      </button>
-      <button className="walk-btn is-close" disabled={!on} onClick={() => go(-1)} aria-label="Stop walking" title="Stop walking (esc)">
-        <Icon name="x" size={13} />
-      </button>
-    </div>
+      <ol className="wk-outline">
+        {stations.map((s, i) => (
+          <li key={i} className={i === at ? "is-on" : i < at ? "is-past" : ""}>
+            <button onClick={() => go(i)} aria-current={i === at ? "step" : undefined}>
+              <span className="wk-n">{i < at ? <Icon name="check" size={11} /> : s.label || i + 1}</span>
+              <span className="wk-name">{s.short}</span>
+            </button>
+          </li>
+        ))}
+        <li className="is-end">
+          <span className="wk-n">
+            <Icon name="reply" size={11} />
+          </span>
+          <span className="wk-name">{kindOf(flowKey) === "playbook" ? "Reply to you" : "Returns"}</span>
+        </li>
+      </ol>
+      <p className="wk-keys">
+        <kbd>←</kbd> <kbd>→</kbd> step <span>·</span> <kbd>esc</kbd> stop
+      </p>
+    </header>
   );
 }
 
-function Header({ flowKey, leave, walk, walking }: { flowKey: EntityKey | null; leave: (to: EntityKey | null) => void; walk: () => void; walking: boolean }) {
+
+function Header({ flowKey, leave, walk }: { flowKey: EntityKey | null; leave: (to: EntityKey | null) => void; walk: () => void }) {
   const { stack } = useProto();
   if (!flowKey)
     return (
@@ -183,22 +199,11 @@ function Header({ flowKey, leave, walk, walking }: { flowKey: EntityKey | null; 
       <p>{plain(whenOf(stack, flowKey) || stack.entities.get(flowKey)!.summary)}</p>
       {example && <p className="e-example">“{example.prompt.replace(/^\/poteto-mode\s*/, "")}”</p>}
       <div className="e-actions">
-        {!walking && (
-          <button className="e-read" onClick={walk}>
-            Walk through it <Icon name="arrow" size={12} />
-          </button>
-        )}
+        <button className="e-read" onClick={walk}>
+          Walk through it <Icon name="arrow" size={12} />
+        </button>
         <span className="e-hint">
-          {walking ? (
-            <>
-              <kbd>←</kbd>
-              <kbd>→</kbd> to walk
-            </>
-          ) : (
-            <>
-              <kbd>esc</kbd> back
-            </>
-          )}
+          <kbd>esc</kbd> back
         </span>
       </div>
     </header>
@@ -258,7 +263,11 @@ function Canvas({ flowKey, enter, back, target, expanded, setExpanded }: CanvasP
   useEffect(() => {
     if (!flowKey) return;
     const opened = expanded ? graph.nodes.find((n) => n.id === expanded) : undefined;
-    if (!opened) followed.current = null;
+    // Ending a walk glides back to the path's normal framing, clear of the header.
+    if (!opened && followed.current) {
+      followed.current = null;
+      rf.fitView({ ...fit, duration: 600 });
+    }
     const col = opened ? columnOf(opened) : -2;
     const dx = opened ? OPEN_W - STEP_W : 0;
     const dy = opened ? Math.max(0, openH + 40 - COLUMN_Y) : 0;
@@ -270,13 +279,15 @@ function Canvas({ flowKey, enter, back, target, expanded, setExpanded }: CanvasP
         return [b.id, { x, y }];
       }),
     );
-    // The camera follows the open step: centered across, its top just below the header.
+    // The camera puts the open step in one fixed reading spot, just right of the walk panel.
     if (opened && followed.current !== opened.id) {
       followed.current = opened.id;
       const at = target.get(opened.id)!;
-      const zoom = Math.min(1, Math.max(0.8, rf.getZoom()));
-      const h = document.querySelector(".e")?.clientHeight ?? window.innerHeight;
-      rf.setCenter(at.x + OPEN_W / 2, at.y + (h / 2 - 250) / zoom, { zoom, duration: 560 });
+      const box = document.querySelector(".e")?.getBoundingClientRect();
+      const w = box?.width ?? window.innerWidth;
+      const h = box?.height ?? window.innerHeight;
+      const sx = Math.min(READ_X, w * 0.36);
+      rf.setCenter(at.x + (w / 2 - sx), at.y + (h / 2 - READ_Y), { zoom: 1, duration: 600 });
     }
     const start = new Map(rf.getNodes().map((n) => [n.id, n.position]));
     const t0 = performance.now();
@@ -294,10 +305,19 @@ function Canvas({ flowKey, enter, back, target, expanded, setExpanded }: CanvasP
     };
     frame.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame.current);
-  }, [expanded, openH, graph, flowKey, rf, setNodes]);
+  }, [expanded, openH, graph, flowKey, rf, setNodes, fit]);
+
+  const walkLit = useMemo(() => {
+    if (!expanded) return null;
+    const idx = Number(expanded.slice(1));
+    const ids = new Set<string>([expanded]);
+    graph.nodes.forEach((n) => n.data.t === "callee" && n.data.step === idx && !n.data.handoff && ids.add(n.id));
+    graph.edges.forEach((e) => e.source === expanded && e.type === "branch" && ids.add(e.id));
+    return ids;
+  }, [expanded, graph]);
 
   // Hovering lights what the node touches. A copy of a skill lights every copy and its step.
-  const lit = useMemo(() => {
+  const hoverLit = useMemo(() => {
     if (!hover) return null;
     const node = graph.nodes.find((n) => n.id === hover);
     const ids = new Set<string>([hover]);
@@ -314,6 +334,7 @@ function Canvas({ flowKey, enter, back, target, expanded, setExpanded }: CanvasP
     }
     return ids;
   }, [hover, graph]);
+  const lit = hoverLit ?? walkLit;
 
   // Inside a path, hovering dims what it does not touch. On the overview only its wire lights up.
   const shown = useMemo(
@@ -332,13 +353,15 @@ function Canvas({ flowKey, enter, back, target, expanded, setExpanded }: CanvasP
   return (
     <CanvasCtx.Provider value={ctx}>
       <ReactFlow
-        className={[far && "is-far", ready && "is-ready", !flowKey && nav.dir === "out" && "no-enter"].filter(Boolean).join(" ")}
+        className={[far && "is-far", ready && "is-ready", expanded && "is-walking", !flowKey && nav.dir === "out" && "no-enter"].filter(Boolean).join(" ")}
         nodes={shown}
         edges={graph.edges}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         onNodesChange={onNodesChange}
         nodesConnectable={false}
+        panOnScroll
+        zoomOnScroll={false}
         minZoom={0.2}
         maxZoom={2.4}
         colorMode="dark"

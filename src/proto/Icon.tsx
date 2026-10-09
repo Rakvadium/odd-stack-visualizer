@@ -4,6 +4,7 @@ const PATHS = {
   chevron: <path d="M6 4l4 4-4 4" />,
   down: <path d="M4 6l4 4 4-4" />,
   x: <path d="M4 4l8 8M12 4l-8 8" />,
+  check: <path d="M3.5 8.5l3 3 6-7" />,
   crown: <path d="M2.5 12.5h11M3 11l-1-6 3.5 2.5L8 3l2.5 4.5L14 5l-1 6z" />,
   bolt: <path d="M9 1.5L3.5 9H8l-1 5.5L12.5 7H8z" />,
   chat: <path d="M2.5 3.5h11v7h-6l-3 2.5v-2.5h-2z" />,

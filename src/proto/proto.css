@@ -64,9 +64,8 @@ h1, h2, h3, h4 { text-wrap: balance; }
 
 .switcher {
   position: fixed;
-  left: 50%;
-  bottom: 18px;
-  transform: translateX(-50%);
+  top: 14px;
+  right: 16px;
   z-index: 50;
   display: flex;
   align-items: center;
@@ -79,15 +78,15 @@ h1, h2, h3, h4 { text-wrap: balance; }
   backdrop-filter: blur(8px);
 }
 
-.switcher-label { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #a1a1aa; padding: 0 8px 0 10px; }
+.switcher-label { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: #a1a1aa; padding: 0 8px 0 10px; }
 
 .switcher button {
   all: unset;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 6px 12px;
+  gap: 6px;
+  padding: 4px 9px;
   border-radius: 8px;
   font-size: 13px;
   font-weight: 550;

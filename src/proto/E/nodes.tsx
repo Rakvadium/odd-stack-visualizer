@@ -202,7 +202,7 @@ function StepNode({ id, data }: NodeProps<GNode>) {
         <span className="n-title">{s.short}</span>
       </header>
       {isOpen ? (
-        <div className="n-read nowheel nodrag">
+        <div className="n-read nodrag">
           {!titleIsShort && (
             <p className="n-lede">
               <Inline text={s.title} base={base} />

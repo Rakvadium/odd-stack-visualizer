@@ -213,14 +213,14 @@ html.dark .trigger-list { background: #2a2c31; }
 .n-entry svg { color: #fbbf24; }
 
 .n-step { width: 300px; }
-.n-step.is-open { width: 460px; border-color: #6b6d74; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 0 4px rgba(236, 236, 239, 0.05); cursor: default; }
+.n-step.is-open { width: 560px; border-color: #6b6d74; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 0 4px rgba(236, 236, 239, 0.05); cursor: default; }
 .n-num { display: grid; place-items: center; flex: none; width: 26px; height: 26px; border-radius: 50%; background: #ececef; color: #111215; font: 700 12px var(--mono); }
 .n-title { line-height: 1.3; }
 .n-gist { margin: 8px 0 0; font-size: 13px; line-height: 1.5; color: #a1a1aa; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .n-gist.is-long { -webkit-line-clamp: 6; }
 .n-meta { display: inline-flex; gap: 10px; }
 
-.n-read { max-height: 360px; margin: 10px -6px 0 0; padding-right: 8px; overflow: auto; cursor: auto; user-select: text; font-size: 13.5px; line-height: 1.62; color: #c2c2c8; animation: fade-in 0.3s ease; }
+.n-read { margin: 12px 0 0; cursor: auto; user-select: text; font-size: 13.5px; line-height: 1.62; color: #c2c2c8; animation: fade-in 0.3s ease; }
 .n-read .md p { margin-bottom: 10px; }
 .n-lede { margin: 0 0 10px; color: #f4f4f5; font-size: 14px; }
 .n-read::-webkit-scrollbar { width: 6px; }
@@ -305,83 +305,110 @@ html.dark .trigger-list { background: #2a2c31; }
 
 .e-hint kbd + kbd { margin-left: -1px; }
 
-.walk {
+
+/* ---------- walk mode ---------- */
+
+/* A solid wall behind the panel that fades out just before the reading card. */
+.e .react-flow.is-walking::after {
+  content: "";
   position: absolute;
-  left: 50%;
-  bottom: 78px;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px;
-  border-radius: 16px;
-  background: rgba(26, 27, 31, 0.92);
-  border: 1px solid #2f3136;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(12px);
-  transform: translate(-50%, 16px);
-  opacity: 0;
+  inset: 0 auto 0 0;
+  width: 500px;
+  z-index: 4;
   pointer-events: none;
-  transition: opacity 0.22s ease, transform 0.28s cubic-bezier(0.2, 0.7, 0.2, 1);
+  background: linear-gradient(90deg, #111215 0%, #111215 86%, rgba(17, 18, 21, 0) 100%);
+  animation: fade-in 0.3s ease;
 }
 
-.walk.is-on { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+.e-head.wk { width: 380px; max-width: 32vw; top: 26px; animation: wk-in 0.3s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.wk-exit { all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; padding: 4px 8px; margin-left: -8px; border-radius: 7px; font-size: 13px; font-weight: 600; color: var(--ink-2); }
+.wk-exit:hover { background: #202126; color: var(--ink); }
 
-.walk-btn {
+.wk-controls { display: grid; grid-template-columns: 44px 1fr 112px; align-items: center; gap: 10px; margin-top: 16px; }
+.wk-count { text-align: center; font-size: 13.5px; color: var(--ink-3); }
+.wk-count b { color: #f4f4f5; font-weight: 700; }
+
+.wk-btn {
   all: unset;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
-  height: 40px;
-  min-width: 40px;
-  padding: 0 12px;
+  gap: 8px;
+  height: 44px;
   box-sizing: border-box;
-  border-radius: 10px;
-  background: #24262b;
+  border-radius: 12px;
+  background: #1f2025;
+  border: 1px solid #2f3136;
   color: #d4d4d8;
-  font-size: 13.5px;
-  font-weight: 620;
-  transition: background 0.15s, color 0.15s;
+  font-size: 14px;
+  font-weight: 640;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.1s;
 }
 
-.walk-btn:hover:not(:disabled) { background: #30333a; color: #fff; }
-.walk-btn:disabled { opacity: 0.3; cursor: default; }
-.walk-btn.is-next { min-width: 96px; background: #ececef; color: #111215; }
-.walk-btn.is-next:hover:not(:disabled) { background: #fff; color: #111215; }
-.walk-btn.is-close { padding: 0; background: transparent; color: #8e8e96; }
-.walk-btn:focus-visible { outline: 2px solid #a78bfa; outline-offset: 2px; }
+.wk-btn:hover:not(:disabled) { background: #292b31; border-color: #43454c; color: #fff; }
+.wk-btn:active:not(:disabled) { transform: translateY(1px); }
+.wk-btn:disabled { opacity: 0.3; cursor: default; }
+.wk-btn.is-next { background: #ececef; border-color: #ececef; color: #111215; }
+.wk-btn.is-next:hover { background: #fff; border-color: #fff; color: #111215; }
+.wk-btn:focus-visible, .wk-outline button:focus-visible { outline: 2px solid #a78bfa; outline-offset: 2px; }
 
-.walk-mid { display: grid; gap: 4px; padding: 0 10px; min-width: 240px; }
-.walk-track { display: flex; align-items: center; list-style: none; margin: 0; padding: 0; }
-.walk-track li { display: flex; align-items: center; }
-.walk-track li + li::before { content: ""; width: 10px; height: 2px; background: #34363c; transition: background 0.2s; }
-.walk-track li.is-past + li::before, .walk-track li.is-on::before { background: #ececef; }
+.wk-outline { position: relative; list-style: none; margin: 22px 0 0; padding: 0; }
+.wk-outline li { position: relative; }
+.wk-outline li::before { content: ""; position: absolute; left: 15px; top: 30px; bottom: -6px; width: 2px; background: #2a2c31; }
+.wk-outline li:last-child::before { display: none; }
+.wk-outline li.is-past::before { background: #6b6d74; }
 
-.walk-track button {
+.wk-outline button,
+.wk-outline .is-end {
   all: unset;
-  cursor: pointer;
+  box-sizing: border-box;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding: 4px 8px 4px 2px;
+  margin: 2px 0;
+  border-radius: 10px;
+  transition: background 0.15s;
+}
+
+.wk-outline button { cursor: pointer; }
+.wk-outline button:hover { background: #1b1c20; }
+.wk-outline .is-on button { background: #1f2025; box-shadow: inset 0 0 0 1px #34363c; }
+
+.wk-n {
+  position: relative;
+  z-index: 1;
   display: grid;
   place-items: center;
-  width: 20px;
-  height: 20px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  font: 600 10px var(--mono);
-  color: #8e8e96;
+  background: #111215;
   box-shadow: inset 0 0 0 1.5px #3a3c42;
-  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
+  font: 650 11.5px var(--mono);
+  color: #8e8e96;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
 }
 
-.walk-track button:hover { color: #f4f4f5; box-shadow: inset 0 0 0 1.5px #8e8e96; }
-.walk-track .is-past button { background: #ececef; color: #111215; box-shadow: none; }
-.walk-track .is-on button { background: #111215; color: #fff; box-shadow: inset 0 0 0 2px #ececef; transform: scale(1.15); }
+.wk-outline .is-past .wk-n { background: #2a2c31; box-shadow: none; color: #c2c2c8; }
+.wk-outline .is-on .wk-n { background: #ececef; color: #111215; box-shadow: 0 0 0 4px rgba(236, 236, 239, 0.1); }
+.wk-outline .is-end .wk-n { box-shadow: inset 0 0 0 1.5px #3a3c42; border-radius: 9px; }
 
-.walk-now { display: flex; align-items: baseline; gap: 8px; white-space: nowrap; }
-.walk-now small { font: 600 11px var(--mono); color: #74747c; }
-.walk-now b { font-size: 13.5px; font-weight: 620; color: #f4f4f5; overflow: hidden; text-overflow: ellipsis; max-width: 280px; }
+.wk-name { font-size: 14px; font-weight: 520; line-height: 1.35; color: #8e8e96; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; transition: color 0.2s; }
+.wk-outline .is-past .wk-name { color: #a1a1aa; }
+.wk-outline .is-on .wk-name { color: #fff; font-weight: 650; }
+.wk-outline button:hover .wk-name { color: #e4e4e7; }
+.wk-outline .is-end .wk-name { color: #62626a; }
 
-/* Fixed width, so Previous and Next never shift as the step name changes. */
-.walk-mid { width: 380px; min-width: 0; box-sizing: border-box; }
-.walk-now { min-width: 0; }
-.walk-now b { max-width: none; min-width: 0; }
+.e-head .wk-keys { margin: 18px 0 0 2px; font-size: 12px; color: var(--ink-4); }
+.wk-keys kbd { font: 11px var(--mono); padding: 1px 5px; border-radius: 4px; border: 1px solid #34363c; color: var(--ink-3); }
+.wk-keys span { margin: 0 4px; }
+@keyframes wk-in { from { opacity: 0; transform: translateY(6px); } }
+
+/* The open card reads like a page: bigger type, full text, no scroll box. */
+.n-step.is-open .n-head { font-size: 17px; }
+.n-step.is-open .n-read { font-size: 14.5px; line-height: 1.68; }
+.n-step.is-open .n-lede { font-size: 15.5px; }
