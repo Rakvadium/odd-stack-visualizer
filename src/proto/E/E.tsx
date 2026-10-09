@@ -19,14 +19,10 @@ import { groupOf, kindOf, nameOf, whenOf } from "../data";
 import { Icon } from "../Icon";
 import { plain } from "../Md";
 import { COLUMN_Y, STEP_W, columnOf, flowGraph, overviewGraph, type GNode } from "./layout";
+import { nav } from "./nav";
 import { CanvasCtx, edgeTypes, nodeTypes } from "./nodes";
 import "./e.css";
 
-/**
- * Navigation memory that outlives a scene. Each path mounts a fresh canvas, so the trail of
- * paths you dove through, and the node you left from, live here.
- */
-const nav: { trail: EntityKey[]; from: string | null; dir: "in" | "out" } = { trail: [], from: null, dir: "in" };
 
 const OPEN_W = 460;
 const EASE = (t: number) => 1 - Math.pow(1 - t, 3);
@@ -43,16 +39,26 @@ export function E() {
 }
 
 function Scene({ flowKey }: { flowKey: EntityKey | null }) {
-  const { setPath, reader } = useProto();
-  const rf = useReactFlow();
+  const { stack, setPath, reader } = useProto();
+  const rf = useReactFlow<GNode>();
   const [leaving, setLeaving] = useState<"in" | "out" | null>(null);
   const [target, setTarget] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const steps = flowKey ? stack.flows.get(flowKey)!.stations.length : 0;
 
   /** Zoom into a node, then swap the scene to `key`. */
   const enter = useCallback(
     (nodeId: string, key: EntityKey) => {
       if (leaving) return;
-      nav.trail = flowKey ? [...nav.trail, flowKey] : [];
+      const node = rf.getNode(nodeId);
+      if (flowKey) {
+        const step = node?.data.t === "callee" ? node.data.step : -1;
+        nav.trail = [...nav.trail, flowKey];
+        nav.callers = [...nav.callers, { flow: flowKey, label: stack.flows.get(flowKey)!.stations[step]?.label || (step >= 0 ? String(step + 1) : undefined) }];
+      } else {
+        nav.trail = [];
+        nav.callers = [];
+      }
       nav.from = null;
       nav.dir = "in";
       setLeaving("in");
@@ -60,7 +66,7 @@ function Scene({ flowKey }: { flowKey: EntityKey | null }) {
       rf.fitView({ nodes: [{ id: nodeId }], duration: 620, maxZoom: 2.6, padding: 0.18 });
       window.setTimeout(() => setPath(key), 600);
     },
-    [leaving, flowKey, rf, setPath],
+    [leaving, flowKey, rf, setPath, stack],
   );
 
   /** Pull back out to the overview or an earlier path in the trail. */
@@ -69,6 +75,7 @@ function Scene({ flowKey }: { flowKey: EntityKey | null }) {
       if (leaving) return;
       const at = to ? nav.trail.indexOf(to) : -1;
       nav.trail = at >= 0 ? nav.trail.slice(0, at) : [];
+      nav.callers = at >= 0 ? nav.callers.slice(0, at) : [];
       nav.from = flowKey;
       nav.dir = "out";
       setLeaving("out");
@@ -78,25 +85,38 @@ function Scene({ flowKey }: { flowKey: EntityKey | null }) {
     [leaving, flowKey, rf, setPath],
   );
 
+  // Esc closes an open step before it leaves the path. Arrows walk the path one step at a time.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key !== "Escape" || reader.length || !flowKey) return;
-      leave(nav.trail.at(-1) ?? null);
+      if (reader.length || !flowKey || document.activeElement?.tagName === "INPUT") return;
+      const at = expanded ? Number(expanded.slice(1)) : -1;
+      if (e.key === "Escape") expanded ? setExpanded(null) : leave(nav.trail.at(-1) ?? null);
+      else if (e.key === "ArrowRight") setExpanded(`s${Math.min(steps - 1, at + 1)}`);
+      else if (e.key === "ArrowLeft" && at > 0) setExpanded(`s${at - 1}`);
+      else return;
+      e.preventDefault();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [flowKey, leave, reader.length]);
+  }, [flowKey, leave, reader.length, expanded, steps]);
 
   return (
     <div className={`scene${leaving ? ` is-leaving-${leaving}` : ""}`}>
-      <Canvas flowKey={flowKey} enter={enter} target={target} />
-      <Header flowKey={flowKey} leave={leave} />
+      <Canvas
+        flowKey={flowKey}
+        enter={enter}
+        back={() => leave(nav.trail.at(-1) ?? null)}
+        target={target}
+        expanded={expanded}
+        setExpanded={setExpanded}
+      />
+      <Header flowKey={flowKey} leave={leave} walk={() => setExpanded("s0")} walking={expanded !== null} />
     </div>
   );
 }
 
-function Header({ flowKey, leave }: { flowKey: EntityKey | null; leave: (to: EntityKey | null) => void }) {
-  const { stack, open } = useProto();
+function Header({ flowKey, leave, walk, walking }: { flowKey: EntityKey | null; leave: (to: EntityKey | null) => void; walk: () => void; walking: boolean }) {
+  const { stack } = useProto();
   if (!flowKey)
     return (
       <header className="e-head">
@@ -123,24 +143,43 @@ function Header({ flowKey, leave }: { flowKey: EntityKey | null; leave: (to: Ent
       <p>{plain(whenOf(stack, flowKey) || stack.entities.get(flowKey)!.summary)}</p>
       {example && <p className="e-example">“{example.prompt.replace(/^\/poteto-mode\s*/, "")}”</p>}
       <div className="e-actions">
-        <button className="e-read" onClick={() => open({ t: "step", flow: flowKey, index: 0 })}>
-          Read start to finish <Icon name="arrow" size={12} />
-        </button>
+        {!walking && (
+          <button className="e-read" onClick={walk}>
+            Walk through it <Icon name="arrow" size={12} />
+          </button>
+        )}
         <span className="e-hint">
-          <kbd>esc</kbd> back
+          {walking ? (
+            <>
+              <kbd>←</kbd>
+              <kbd>→</kbd> previous / next step <kbd>esc</kbd> close
+            </>
+          ) : (
+            <>
+              <kbd>esc</kbd> back
+            </>
+          )}
         </span>
       </div>
     </header>
   );
 }
 
-function Canvas({ flowKey, enter, target }: { flowKey: EntityKey | null; enter: (nodeId: string, key: EntityKey) => void; target: string | null }) {
+interface CanvasProps {
+  flowKey: EntityKey | null;
+  enter: (nodeId: string, key: EntityKey) => void;
+  back: () => void;
+  target: string | null;
+  expanded: string | null;
+  setExpanded: (id: string | null | ((cur: string | null) => string | null)) => void;
+}
+
+function Canvas({ flowKey, enter, back, target, expanded, setExpanded }: CanvasProps) {
   const { stack, open } = useProto();
   const rf = useReactFlow();
   const graph = useMemo(() => (flowKey ? flowGraph(stack, flowKey) : overviewGraph()), [stack, flowKey]);
   const [nodes, setNodes, onNodesChange] = useNodesState<GNode>(graph.nodes);
   const [hover, setHover] = useState<string | null>(null);
-  const [expanded, setExpanded] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
   const initialized = useNodesInitialized();
   const far = useStore((s) => s.transform[2] < 0.72);
@@ -175,9 +214,11 @@ function Canvas({ flowKey, enter, target }: { flowKey: EntityKey | null; enter: 
 
   // Opening a step makes room: later columns slide right, and the step's own column slides down.
   const frame = useRef(0);
+  const followed = useRef<string | null>(null);
   useEffect(() => {
     if (!flowKey) return;
     const opened = expanded ? graph.nodes.find((n) => n.id === expanded) : undefined;
+    if (!opened) followed.current = null;
     const col = opened ? columnOf(opened) : -2;
     const dx = opened ? OPEN_W - STEP_W : 0;
     const dy = opened ? Math.max(0, openH + 40 - COLUMN_Y) : 0;
@@ -189,6 +230,14 @@ function Canvas({ flowKey, enter, target }: { flowKey: EntityKey | null; enter: 
         return [b.id, { x, y }];
       }),
     );
+    // The camera follows the open step: centered across, its top just below the header.
+    if (opened && followed.current !== opened.id) {
+      followed.current = opened.id;
+      const at = target.get(opened.id)!;
+      const zoom = Math.min(1, Math.max(0.8, rf.getZoom()));
+      const h = document.querySelector(".e")?.clientHeight ?? window.innerHeight;
+      rf.setCenter(at.x + OPEN_W / 2, at.y + (h / 2 - 270) / zoom, { zoom, duration: 560 });
+    }
     const start = new Map(rf.getNodes().map((n) => [n.id, n.position]));
     const t0 = performance.now();
     cancelAnimationFrame(frame.current);
@@ -237,8 +286,8 @@ function Canvas({ flowKey, enter, target }: { flowKey: EntityKey | null; enter: 
     [nodes, lit, target, flowKey],
   );
 
-  const toggle = useCallback((id: string) => setExpanded((cur) => (cur === id ? null : id)), []);
-  const ctx = useMemo(() => ({ lit, expanded, toggle, dive: enter }), [lit, expanded, toggle, enter]);
+  const toggle = useCallback((id: string) => setExpanded((cur) => (cur === id ? null : id)), [setExpanded]);
+  const ctx = useMemo(() => ({ lit, expanded, toggle, dive: enter, back }), [lit, expanded, toggle, enter, back]);
 
   return (
     <CanvasCtx.Provider value={ctx}>
@@ -259,6 +308,7 @@ function Canvas({ flowKey, enter, target }: { flowKey: EntityKey | null; enter: 
         onNodeClick={(_, n) => {
           const d = n.data;
           if (d.t === "route") enter(n.id, d.key);
+          else if (d.t === "entry" && nav.callers.length) back();
           else if (d.t === "always") open({ t: "always" });
           else if (d.t === "step") toggle(n.id);
           else if (d.t === "callee") d.handoff || kindOf(d.key) === "playbook" ? enter(n.id, d.key) : open({ t: "entity", key: d.key });

@@ -8,6 +8,7 @@ import { KIND_LABEL, callsOf, dirOf, gistOf, isOverride, kindOf, nameOf, whenOf 
 import { Icon } from "../Icon";
 import { Inline, Md, plain } from "../Md";
 import { GROUP_COLORS, KIND_COLORS, type GEdge, type GNode } from "./layout";
+import { currentCaller } from "./nav";
 
 interface CanvasState {
   /** Node ids and edge ids that stay lit while something is hovered. Null when nothing is. */
@@ -16,9 +17,11 @@ interface CanvasState {
   toggle: (id: string) => void;
   /** Zoom into a node, then show `key` as the path. */
   dive: (nodeId: string, key: EntityKey) => void;
+  /** Go back to the path that called this one. */
+  back: () => void;
 }
 
-export const CanvasCtx = createContext<CanvasState>({ lit: null, expanded: null, toggle: () => {}, dive: () => {} });
+export const CanvasCtx = createContext<CanvasState>({ lit: null, expanded: null, toggle: () => {}, dive: () => {}, back: () => {} });
 
 const vars = (v: Record<string, string>) => v as CSSProperties;
 
@@ -153,7 +156,21 @@ function RouteNode({ data }: NodeProps<GNode>) {
 }
 
 function EntryNode({ data }: NodeProps<GNode>) {
+  const { stack } = useProto();
   if (data.t !== "entry") return null;
+  const caller = currentCaller();
+  if (caller) {
+    return (
+      <div className="n n-entry is-caller" title={`Back to ${nameOf(stack, caller.flow)}`}>
+        <Icon name="back" size={13} />
+        <span>
+          {caller.label ? "Called by" : "Handed off from"} <b>{nameOf(stack, caller.flow)}</b>
+          {caller.label && <span className="n-entry-step">step {caller.label}</span>}
+        </span>
+        <Port type="source" position={Position.Right} id="next" />
+      </div>
+    );
+  }
   const routed = kindOf(data.flow) === "playbook" || data.flow === "skill:figure-it-out";
   return (
     <div className="n n-entry">
@@ -165,7 +182,7 @@ function EntryNode({ data }: NodeProps<GNode>) {
 
 function StepNode({ id, data }: NodeProps<GNode>) {
   const { stack, open } = useProto();
-  const { expanded } = useContext(CanvasCtx);
+  const { expanded, toggle } = useContext(CanvasCtx);
   if (data.t !== "step") return null;
   const flow = stack.flows.get(data.flow)!;
   const s = flow.stations[data.index];
@@ -205,9 +222,31 @@ function StepNode({ id, data }: NodeProps<GNode>) {
             </button>
           )}
         </span>
-        <span className="n-open">
-          {isOpen ? "Close" : "Read"} <Icon name={isOpen ? "x" : "chevron"} size={11} />
-        </span>
+        {isOpen ? (
+          <span className="n-walk nodrag">
+            <button disabled={data.index === 0} onClick={(e) => (e.stopPropagation(), toggle(`s${data.index - 1}`))} aria-label="Previous step">
+              <Icon name="back" size={12} />
+            </button>
+            <button
+              className="is-next"
+              onClick={(e) => (e.stopPropagation(), toggle(data.index < flow.stations.length - 1 ? `s${data.index + 1}` : id))}
+            >
+              {data.index < flow.stations.length - 1 ? (
+                <>
+                  Next <Icon name="arrow" size={12} />
+                </>
+              ) : (
+                <>
+                  Done <Icon name="x" size={11} />
+                </>
+              )}
+            </button>
+          </span>
+        ) : (
+          <span className="n-open">
+            Read <Icon name="chevron" size={11} />
+          </span>
+        )}
       </footer>
       <Port type="source" position={Position.Right} id="next" />
       {callCount > 0 && <Port type="source" position={Position.Bottom} id="calls" style={{ left: 20 }} />}
@@ -261,7 +300,11 @@ function ReplyNode({ data }: NodeProps<GNode>) {
       <header className="n-head">
         <Icon name="reply" size={14} /> {kindOf(data.flow) === "playbook" ? "Reply to you" : "Returns"}
       </header>
-      {flow.reply ? <p className="n-gist is-long">{plain(flow.reply)}</p> : <p className="n-gist">Back to the step that called it.</p>}
+      {flow.reply ? (
+        <p className="n-gist is-long">{plain(flow.reply)}</p>
+      ) : (
+        <p className="n-gist">{kindOf(data.flow) === "playbook" ? "Back to the playbook that ran it." : "Back to the step that called it."}</p>
+      )}
       <Port type="source" position={Position.Bottom} id="out" style={{ left: 20 }} />
     </div>
   );
