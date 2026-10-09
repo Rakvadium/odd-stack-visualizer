@@ -111,6 +111,46 @@ function Scene({ flowKey }: { flowKey: EntityKey | null }) {
         setExpanded={setExpanded}
       />
       <Header flowKey={flowKey} leave={leave} walk={() => setExpanded("s0")} walking={expanded !== null} />
+      {flowKey && <WalkBar flowKey={flowKey} at={expanded ? Number(expanded.slice(1)) : -1} go={(i) => setExpanded(i < 0 ? null : `s${i}`)} />}
+    </div>
+  );
+}
+
+/** Fixed controls for walking a path, so Next is always in the same place while the camera moves. */
+function WalkBar({ flowKey, at, go }: { flowKey: EntityKey; at: number; go: (index: number) => void }) {
+  const { stack } = useProto();
+  const stations = stack.flows.get(flowKey)!.stations;
+  const on = at >= 0;
+  const last = at === stations.length - 1;
+  const current = on ? stations[at] : null;
+  return (
+    <div className={`walk${on ? " is-on" : ""}`} role="toolbar" aria-label="Walk the path" aria-hidden={!on}>
+      <button className="walk-btn" disabled={!on || at === 0} onClick={() => go(at - 1)} aria-label="Previous step" title="Previous step (←)">
+        <Icon name="back" size={14} />
+      </button>
+      <div className="walk-mid">
+        <ol className="walk-track">
+          {stations.map((s, i) => (
+            <li key={i} className={i === at ? "is-on" : i < at ? "is-past" : ""}>
+              <button onClick={() => go(i)} title={s.short} tabIndex={on ? 0 : -1}>
+                {s.label || i + 1}
+              </button>
+            </li>
+          ))}
+        </ol>
+        <div className="walk-now" aria-live="polite">
+          <small>
+            Step {current?.label || at + 1} of {stations.length}
+          </small>
+          <b>{current?.short}</b>
+        </div>
+      </div>
+      <button className="walk-btn is-next" disabled={!on} onClick={() => go(last ? -1 : at + 1)} title={last ? "Finish (esc)" : "Next step (→)"}>
+        {last ? "Done" : "Next"} <Icon name={last ? "x" : "arrow"} size={13} />
+      </button>
+      <button className="walk-btn is-close" disabled={!on} onClick={() => go(-1)} aria-label="Stop walking" title="Stop walking (esc)">
+        <Icon name="x" size={13} />
+      </button>
     </div>
   );
 }
@@ -152,7 +192,7 @@ function Header({ flowKey, leave, walk, walking }: { flowKey: EntityKey | null; 
           {walking ? (
             <>
               <kbd>←</kbd>
-              <kbd>→</kbd> previous / next step <kbd>esc</kbd> close
+              <kbd>→</kbd> to walk
             </>
           ) : (
             <>
@@ -236,7 +276,7 @@ function Canvas({ flowKey, enter, back, target, expanded, setExpanded }: CanvasP
       const at = target.get(opened.id)!;
       const zoom = Math.min(1, Math.max(0.8, rf.getZoom()));
       const h = document.querySelector(".e")?.clientHeight ?? window.innerHeight;
-      rf.setCenter(at.x + OPEN_W / 2, at.y + (h / 2 - 270) / zoom, { zoom, duration: 560 });
+      rf.setCenter(at.x + OPEN_W / 2, at.y + (h / 2 - 250) / zoom, { zoom, duration: 560 });
     }
     const start = new Map(rf.getNodes().map((n) => [n.id, n.position]));
     const t0 = performance.now();

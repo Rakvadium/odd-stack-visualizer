@@ -182,7 +182,7 @@ function EntryNode({ data }: NodeProps<GNode>) {
 
 function StepNode({ id, data }: NodeProps<GNode>) {
   const { stack, open } = useProto();
-  const { expanded, toggle } = useContext(CanvasCtx);
+  const { expanded } = useContext(CanvasCtx);
   if (data.t !== "step") return null;
   const flow = stack.flows.get(data.flow)!;
   const s = flow.stations[data.index];
@@ -223,24 +223,8 @@ function StepNode({ id, data }: NodeProps<GNode>) {
           )}
         </span>
         {isOpen ? (
-          <span className="n-walk nodrag">
-            <button disabled={data.index === 0} onClick={(e) => (e.stopPropagation(), toggle(`s${data.index - 1}`))} aria-label="Previous step">
-              <Icon name="back" size={12} />
-            </button>
-            <button
-              className="is-next"
-              onClick={(e) => (e.stopPropagation(), toggle(data.index < flow.stations.length - 1 ? `s${data.index + 1}` : id))}
-            >
-              {data.index < flow.stations.length - 1 ? (
-                <>
-                  Next <Icon name="arrow" size={12} />
-                </>
-              ) : (
-                <>
-                  Done <Icon name="x" size={11} />
-                </>
-              )}
-            </button>
+          <span className="n-open">
+            Close <Icon name="x" size={11} />
           </span>
         ) : (
           <span className="n-open">
