@@ -2,7 +2,7 @@ import { buildGraph, type SourceFile } from "./parse";
 import { parseHash, renderApp, type View } from "./render";
 
 const skillFiles = import.meta.glob(
-  ["../../skills/**/*.md", "../../agents/**/*.md", "../../automations/**/*.md", "../../docs/guide/02-poteto-mode.md"],
+  ["../../skills/**/*.md", "../../agents/**/*.md", "../../automations/**/*.md", "../../docs/guide/02-odd-mode.md"],
   { query: "?raw", import: "default", eager: true },
 ) as Record<string, string>;
 

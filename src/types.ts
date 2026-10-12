@@ -26,7 +26,7 @@ export interface GraphNode {
   lead: string;
   reply: string;
   blocks: Block[];
-  /** When this node is a principle, the "when it applies" line from poteto-mode. */
+  /** When this node is a principle, the "when it applies" line from odd-mode. */
   when: string;
   group: string;
   outside: boolean;

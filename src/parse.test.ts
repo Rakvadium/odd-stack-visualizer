@@ -30,8 +30,8 @@ const graph = buildGraph([
   ...load("agents"),
   ...load("automations"),
   {
-    path: "docs/guide/02-poteto-mode.md",
-    text: readFileSync(join(repo, "docs/guide/02-poteto-mode.md"), "utf8"),
+    path: "docs/guide/02-odd-mode.md",
+    text: readFileSync(join(repo, "docs/guide/02-odd-mode.md"), "utf8"),
   },
 ]);
 
@@ -41,11 +41,11 @@ function links(id: string): string[] {
   return [...new Set(node.blocks.flatMap((block) => block.links))];
 }
 
-describe("poteto-mode graph", () => {
+describe("odd-mode graph", () => {
   it("does not require keywords and records the cue phrases", () => {
     expect(graph.keyword.required).toBe(false);
     expect(graph.keyword.evidence.map((item) => item.quote)).toEqual(
-      expect.arrayContaining(["/poteto-mode do it", "You don't write a spec. You say what's wrong or what you want"]),
+      expect.arrayContaining(["/odd-mode do it", "You don't write a spec. You say what's wrong or what you want"]),
     );
     expect(graph.keyword.cues).toEqual(expect.arrayContaining(["new task", "check on PR", "going to bed"]));
     expect(graph.entry.mode).toBe(true);
@@ -117,7 +117,7 @@ describe("poteto-mode graph", () => {
   it("gives how and no-comments their own trees", () => {
     expect(links("skill:how")).toEqual(
       expect.arrayContaining([
-        "rule:pstack-models",
+        "rule:odd-stack-models",
         "ref:how/explorer-prompt",
         "ref:how/explainer-prompt",
       ]),
@@ -131,7 +131,7 @@ describe("poteto-mode graph", () => {
   });
 
   it("leaves direct-only skills off the route and keeps benny separate", () => {
-    expect(graph.outside).toContain("skill:poteto-help");
+    expect(graph.outside).toContain("skill:odd-help");
     expect(graph.outside).toContain("skill:bro");
     expect(graph.automations.length).toBeGreaterThan(0);
     expect(graph.hooksNote.toLowerCase()).toContain("no hooks");

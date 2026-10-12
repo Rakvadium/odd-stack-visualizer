@@ -37,7 +37,7 @@ export function buildGraph(files: SourceFile[]): Graph {
         : "skill";
       const body = stripFrontmatter(file.text);
       const parsed =
-        skillId === "poteto-mode"
+        skillId === "odd-mode"
           ? { lead: "", reply: "", blocks: [] as Block[] }
           : parseBlocks(body, "skill");
       nodes[`skill:${skillId}`] = {
@@ -57,7 +57,7 @@ export function buildGraph(files: SourceFile[]): Graph {
     }
 
     const playbookId = file.path.match(
-      /^skills\/poteto-mode\/playbooks\/([^/]+)\.md$/,
+      /^skills\/odd-mode\/playbooks\/([^/]+)\.md$/,
     )?.[1];
     if (playbookId) {
       const parsed = parseBlocks(file.text, "playbook");
@@ -124,7 +124,7 @@ export function buildGraph(files: SourceFile[]): Graph {
   indexReferences(files, nodes);
   addFixedNodes(nodes);
 
-  const modeText = byPath.get("skills/poteto-mode/SKILL.md") ?? "";
+  const modeText = byPath.get("skills/odd-mode/SKILL.md") ?? "";
   const modeBody = stripFrontmatter(modeText);
   const principles = attachPrinciples(modeBody, nodes);
   const triggers = attachTriggers(modeBody, nodes);
@@ -143,7 +143,7 @@ export function buildGraph(files: SourceFile[]): Graph {
   const edges = collectEdges(nodes, triggers, sections);
   for (const route of routes) {
     edges.push({
-      from: "skill:poteto-mode",
+      from: "skill:odd-mode",
       to: route.targetId,
       where: "Playbook match",
     });
@@ -172,8 +172,8 @@ export function buildGraph(files: SourceFile[]): Graph {
     keyword,
     hooksNote:
       "This plugin ships no hooks. plugin.json declares skills and agents only, and the repo has no hooks directory. A playbook line about pushing with git hooks on is git's own pre-push hooks, not a Cursor hook on this path.",
-    entryId: "skill:poteto-mode",
-    entry: entryMeta(byPath.get("skills/poteto-mode/SKILL.md") ?? ""),
+    entryId: "skill:odd-mode",
+    entry: entryMeta(byPath.get("skills/odd-mode/SKILL.md") ?? ""),
   };
 }
 
@@ -195,7 +195,7 @@ function addFixedNodes(nodes: Record<string, GraphNode>): void {
       summary:
         "Skill from the cursor-team-kit plugin. Run it over the diff before commit.",
       source: null,
-      lead: "Named from poteto-mode and from Opening a PR. It is not a file in this repo.",
+      lead: "Named from odd-mode and from Opening a PR. It is not a file in this repo.",
       reply: "",
       blocks: [],
       when: "Before commit.",
@@ -209,7 +209,7 @@ function addFixedNodes(nodes: Record<string, GraphNode>): void {
       summary:
         "cursor-team-kit skill for browser, Electron, and web UI control.",
       source: null,
-      lead: "Named in poteto-mode's non-negotiables. It is not a file in this repo.",
+      lead: "Named in odd-mode's non-negotiables. It is not a file in this repo.",
       reply: "",
       blocks: [],
       when: "Shipping or reproducing a browser, Electron, or web UI.",
@@ -222,7 +222,7 @@ function addFixedNodes(nodes: Record<string, GraphNode>): void {
       name: "control-cli",
       summary: "cursor-team-kit skill for CLI and TUI control.",
       source: null,
-      lead: "Named in poteto-mode's non-negotiables. It is not a file in this repo.",
+      lead: "Named in odd-mode's non-negotiables. It is not a file in this repo.",
       reply: "",
       blocks: [],
       when: "Shipping or reproducing a CLI or TUI.",
@@ -235,7 +235,7 @@ function addFixedNodes(nodes: Record<string, GraphNode>): void {
       name: "create-skill",
       summary: "Cursor's built-in skill for authoring SKILL.md files.",
       source: null,
-      lead: "Named by poteto-mode and by the Authoring a skill playbook. It is not a file in this repo.",
+      lead: "Named by odd-mode and by the Authoring a skill playbook. It is not a file in this repo.",
       reply: "",
       blocks: [],
       when: "Writing or editing a SKILL.md.",
@@ -247,9 +247,9 @@ function addFixedNodes(nodes: Record<string, GraphNode>): void {
       kind: "external",
       name: "/loop",
       summary:
-        "Cursor's built-in command for a wake loop. Not a pstack skill.",
+        "Cursor's built-in command for a wake loop. Not an odd-stack skill.",
       source: null,
-      lead: "The Autonomous run playbook calls it a built-in, not a pstack skill.",
+      lead: "The Autonomous run playbook calls it a built-in, not an odd-stack skill.",
       reply: "",
       blocks: [],
       when: "A long hunt, a babysit drive, an audit tick, or an autonomous run needs a wake-up.",
@@ -257,11 +257,11 @@ function addFixedNodes(nodes: Record<string, GraphNode>): void {
       outside: false,
     },
     {
-      id: "rule:pstack-models",
+      id: "rule:odd-stack-models",
       kind: "rule",
-      name: "pstack-models.mdc",
+      name: "odd-stack-models.mdc",
       summary:
-        "Always-applied rule that sets the model per role. setup-pstack writes it to ~/.cursor/rules/. It is not in this repo.",
+        "Always-applied rule that sets the model per role. setup-odd-stack writes it to ~/.cursor/rules/. It is not in this repo.",
       source: null,
       lead: "Routed skills read a role line from this rule and fall back to the default named in the skill when the line is missing.",
       reply: "",
@@ -276,7 +276,7 @@ function addFixedNodes(nodes: Record<string, GraphNode>): void {
       name: "watch-pr",
       summary:
         "GitHub PR watcher the Babysit playbook runs directly. JSON by default. The bare command polls until a terminal verdict.",
-      source: "skills/poteto-mode/scripts/watch-pr/watch-pr",
+      source: "skills/odd-mode/scripts/watch-pr/watch-pr",
       lead: "",
       reply: "",
       blocks: [],
@@ -290,7 +290,7 @@ function addFixedNodes(nodes: Record<string, GraphNode>): void {
       name: "worktree-audit.sh",
       summary:
         "Read-only worktree prune audit. Classifies every git worktree and never deletes anything.",
-      source: "skills/poteto-mode/scripts/worktree-audit.sh",
+      source: "skills/odd-mode/scripts/worktree-audit.sh",
       lead: "",
       reply: "",
       blocks: [],
@@ -304,7 +304,7 @@ function addFixedNodes(nodes: Record<string, GraphNode>): void {
       name: "check-plan.mjs",
       summary:
         "Checks a multi-phase plan file and prints every line that fails. The playbook says to fix every line it prints.",
-      source: "skills/poteto-mode/scripts/check-plan.mjs",
+      source: "skills/odd-mode/scripts/check-plan.mjs",
       lead: "",
       reply: "",
       blocks: [],
@@ -318,7 +318,7 @@ function addFixedNodes(nodes: Record<string, GraphNode>): void {
       name: "orch",
       summary:
         "Plain-file bookkeeping for the Orchestrate playbook. One command in and one line out. It never spawns or wakes agents.",
-      source: "skills/poteto-mode/scripts/orch/orch.ts",
+      source: "skills/odd-mode/scripts/orch/orch.ts",
       lead: "",
       reply: "",
       blocks: [],
@@ -410,7 +410,7 @@ function attachTriggers(
     kind: "section",
     name: "Non-negotiables",
     summary: clean(intro),
-    source: "skills/poteto-mode/SKILL.md",
+    source: "skills/odd-mode/SKILL.md",
     lead: intro,
     reply: "",
     blocks: [],
@@ -428,7 +428,7 @@ function attachTriggers(
       kind: "trigger",
       name: title.length > 96 ? `${title.slice(0, 93)}...` : title,
       summary: clean(bullet),
-      source: "skills/poteto-mode/SKILL.md",
+      source: "skills/odd-mode/SKILL.md",
       lead: bullet,
       reply: "",
       blocks: [],
@@ -461,7 +461,7 @@ function attachModeSections(
       kind: "section",
       name,
       summary: clean(firstSentence(text)),
-      source: "skills/poteto-mode/SKILL.md",
+      source: "skills/odd-mode/SKILL.md",
       lead: parsed.lead,
       reply: "",
       blocks: parsed.blocks.length ? parsed.blocks : [{ label: name, text, links: [], template: false }],
@@ -513,31 +513,31 @@ function attachRoutes(modeBody: string, nodes: Record<string, GraphNode>): Route
 }
 
 function keywordNotes(byPath: Map<string, string>): Graph["keyword"] {
-  const guide = byPath.get("docs/guide/02-poteto-mode.md") ?? "";
-  const skill = byPath.get("skills/poteto-mode/SKILL.md") ?? "";
+  const guide = byPath.get("docs/guide/02-odd-mode.md") ?? "";
+  const skill = byPath.get("skills/odd-mode/SKILL.md") ?? "";
   const evidence: EvidenceQuote[] = [];
   const want = [
     {
-      source: "skills/poteto-mode/SKILL.md",
+      source: "skills/odd-mode/SKILL.md",
       text: skill,
       quote:
-        "Use for poteto, /poteto-mode, or requests to work in this style.",
+        "Use for odd, /odd-mode, or requests to work in this style.",
     },
     {
-      source: "docs/guide/02-poteto-mode.md",
+      source: "docs/guide/02-odd-mode.md",
       text: guide,
       quote: "You don't write a spec. You say what's wrong or what you want",
     },
     {
-      source: "docs/guide/02-poteto-mode.md",
+      source: "docs/guide/02-odd-mode.md",
       text: guide,
-      quote: "/poteto-mode do it",
+      quote: "/odd-mode do it",
     },
     {
-      source: "docs/guide/02-poteto-mode.md",
+      source: "docs/guide/02-odd-mode.md",
       text: guide,
       quote:
-        '"new task" tells `/poteto-mode` to re-match rather than continue the prior playbook.',
+        '"new task" tells `/odd-mode` to re-match rather than continue the prior playbook.',
     },
   ];
   for (const item of want) {
@@ -558,7 +558,7 @@ function keywordNotes(byPath: Map<string, string>): Graph["keyword"] {
   return {
     required: false,
     summary:
-      "The slash command passes the rest of the message through as the task. Nothing in the skill or the guide requires that prompt to contain a keyword list. poteto-mode matches the task against playbook conditions. A few phrases are cues that steer a match or a re-match. They are optional. With the conversation already in context, the guide treats `/poteto-mode do it` as enough.",
+      "The slash command passes the rest of the message through as the task. Nothing in the skill or the guide requires that prompt to contain a keyword list. odd-mode matches the task against playbook conditions. A few phrases are cues that steer a match or a re-match. They are optional. With the conversation already in context, the guide treats `/odd-mode do it` as enough.",
     cues,
     evidence,
   };
@@ -635,14 +635,14 @@ function buildAliasMap(nodes: Record<string, GraphNode>): AliasMap {
   add("bug fix", "playbook:bug-fix");
   add("perf issue", "playbook:perf-issue");
   add("comment sicko", "agent:comment-sicko");
-  add("poteto-agent", "agent:poteto-agent", true);
+  add("odd-agent", "agent:odd-agent", true);
   add("deslop", "external:deslop");
   add("control-ui", "external:control-ui", true);
   add("control-cli", "external:control-cli", true);
   add("create-skill", "external:create-skill", true);
   add("loop", "external:loop");
-  add("pstack-models", "rule:pstack-models", true);
-  add("pstack-models.mdc", "rule:pstack-models", true);
+  add("odd-stack-models", "rule:odd-stack-models", true);
+  add("odd-stack-models.mdc", "rule:odd-stack-models", true);
   add("watch-pr", "script:watch-pr", true);
   add("worktree-audit.sh", "script:worktree-audit", true);
   add("check-plan.mjs", "script:check-plan", true);
@@ -809,8 +809,8 @@ function markOutside(
   edges: Edge[],
   principles: string[],
 ): void {
-  const reachable = new Set<string>(["skill:poteto-mode", ...principles]);
-  const queue = ["skill:poteto-mode", ...principles];
+  const reachable = new Set<string>(["skill:odd-mode", ...principles]);
+  const queue = ["skill:odd-mode", ...principles];
   const outgoing = new Map<string, string[]>();
   for (const edge of edges) {
     const list = outgoing.get(edge.from) ?? [];

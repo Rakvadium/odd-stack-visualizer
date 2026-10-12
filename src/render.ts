@@ -40,8 +40,8 @@ export function renderApp(graph: Graph, view: View, query: string): string {
 function renderTop(graph: Graph, query: string): string {
   return `
     <header class="top">
-      <a class="brand" href="#/">pstack paths</a>
-      <p class="tag">Read-only map of <code>/poteto-mode</code>. Parsed from the skill, playbook, and agent files.</p>
+      <a class="brand" href="#/">odd-stack paths</a>
+      <p class="tag">Read-only map of <code>/odd-mode</code>. Parsed from the skill, playbook, and agent files.</p>
       <form class="search" role="search">
         <label for="q">Find</label>
         <input id="q" name="q" type="search" value="${esc(query)}" placeholder="Playbook, skill, or command" autocomplete="off" />
@@ -79,7 +79,7 @@ function renderNav(graph: Graph, view: View, query: string): string {
       <nav class="nav" aria-label="Paths">
       <section>
         <h2>Entry</h2>
-        ${navLink("skill:poteto-mode", "/poteto-mode", "Slash command and custom mode", view)}
+        ${navLink("skill:odd-mode", "/odd-mode", "Slash command and custom mode", view)}
         <a class="nav-link ${view.kind === "routing" ? "is-current" : ""}" href="#/routing">
           <span>Routing layer</span>
           <small>Triggers, principles, subagents</small>
@@ -95,7 +95,7 @@ function renderNav(graph: Graph, view: View, query: string): string {
       </section>
       ${
         outsideLinks
-          ? `<section><h2>Not routed from poteto-mode</h2>${outsideLinks}</section>`
+          ? `<section><h2>Not routed from odd-mode</h2>${outsideLinks}</section>`
           : ""
       }
     </nav>
@@ -155,10 +155,10 @@ function renderMap(graph: Graph): string {
   return `
     <article class="sheet" data-view="map">
       <p class="kicker">Entry</p>
-      <h1><code>/poteto-mode</code> reads the task and opens one path.</h1>
+      <h1><code>/odd-mode</code> reads the task and opens one path.</h1>
       <p class="lede">${esc(graph.keyword.summary)}</p>
       <ul class="facts">
-        <li>Slash command. The words after <code>/poteto-mode</code> are the task.</li>
+        <li>Slash command. The words after <code>/odd-mode</code> are the task.</li>
         <li>Custom mode is ${graph.entry.mode ? "on" : "off"} in the skill frontmatter (<code>mode: true</code>). Pinning it keeps the skill in context. The reminder says: ${esc(graph.entry.reminder)}</li>
         <li>Model auto-invoke is ${graph.entry.disableModelInvocation ? "off" : "on"} (<code>disable-model-invocation: true</code>). The user attaches the skill. The description alone does not start it.</li>
         <li>${esc(graph.hooksNote)}</li>
@@ -167,7 +167,7 @@ function renderMap(graph: Graph): string {
       <p>These triggers live in the Non-negotiables section. They can run before a playbook is chosen, or while it runs. Principles ground every trigger. <a href="#/routing">Open the routing layer</a> to read each one in full.</p>
       <ul class="trigger-index">${triggers}</ul>
       <h2>Every route</h2>
-      <p>Order follows the Playbooks section in <code>skills/poteto-mode/SKILL.md</code>. The last row is the skill the same section uses when no bundled playbook fits, or when the work is large enough to need its own playbook.</p>
+      <p>Order follows the Playbooks section in <code>skills/odd-mode/SKILL.md</code>. The last row is the skill the same section uses when no bundled playbook fits, or when the work is large enough to need its own playbook.</p>
       <ol class="route-list">${routes}</ol>
       ${renderAutomations(graph)}
     </article>
@@ -225,8 +225,8 @@ function renderRouting(graph: Graph): string {
       <p>The Principles section says it grounds every trigger. Each line below is the index entry. Open a principle to read the leaf skill.</p>
       <ol class="principles">${principleHtml}</ol>
       <h2>Rules that sit on the path</h2>
-      ${renderNodePage(graph, required(graph, "rule:pstack-models"), 1)}
-      ${renderNodePage(graph, required(graph, "skill:setup-pstack"), 1)}
+      ${renderNodePage(graph, required(graph, "rule:odd-stack-models"), 1)}
+      ${renderNodePage(graph, required(graph, "skill:setup-odd-stack"), 1)}
       <p>${esc(graph.hooksNote)}</p>
       <h2>Cross-cutting sections</h2>
       <div class="stack">${sections}</div>
@@ -253,13 +253,13 @@ function renderPath(graph: Graph, node: GraphNode): string {
       <ol class="spine">
         <li>
           <h2>1. Entry</h2>
-          <p><a href="#/node/skill%3Apoteto-mode"><code>/poteto-mode</code></a> is the slash command. ${esc(graph.nodes["skill:poteto-mode"]?.summary ?? "")}</p>
+          <p><a href="#/node/skill%3Aodd-mode"><code>/odd-mode</code></a> is the slash command. ${esc(graph.nodes["skill:odd-mode"]?.summary ?? "")}</p>
           <p data-keyword-required="false">${esc(graph.keyword.summary)}</p>
         </li>
         <li>
           <h2>2. Route</h2>
           <p>${route ? esc(route.condition) : "Opened directly."}</p>
-          <p>Subagents spawned inside a playbook step for code use <a href="${hrefFor({ kind: "node", id: "agent:poteto-agent" })}">poteto-agent</a>, which reads this same skill before it works. <code>how</code>, <code>why</code>, <code>interrogate</code>, <code>reflect</code>, and <code>swarm</code> keep the subagent type they name.</p>
+          <p>Subagents spawned inside a playbook step for code use <a href="${hrefFor({ kind: "node", id: "agent:odd-agent" })}">odd-agent</a>, which reads this same skill before it works. <code>how</code>, <code>why</code>, <code>interrogate</code>, <code>reflect</code>, and <code>swarm</code> keep the subagent type they name.</p>
         </li>
         <li>
           <h2>3. ${esc(node.name)}</h2>
@@ -363,7 +363,7 @@ function renderNodePage(graph: Graph, node: GraphNode, depth: number): string {
       : node.blocks.map((block, index) => renderStep(graph, block, index)).join("");
   return `
     <article class="sheet node-page" data-view="node" data-node="${esc(node.id)}" data-kind="${esc(node.kind)}">
-      <p class="kicker">${esc(node.kind)}${node.outside ? " · not on the poteto-mode route" : ""}</p>
+      <p class="kicker">${esc(node.kind)}${node.outside ? " · not on the odd-mode route" : ""}</p>
       <h1>${esc(node.name)}</h1>
       <p class="lede">${esc(node.when || node.summary)}</p>
       ${node.summary && node.when ? `<p>${esc(node.summary)}</p>` : ""}
@@ -403,7 +403,7 @@ function renderAutomations(graph: Graph): string {
     .join("");
   return `
     <h2>Separate from this route</h2>
-    <p><code>automations/benny</code> is a different pack in this repo. poteto-mode does not route to it.</p>
+    <p><code>automations/benny</code> is a different pack in this repo. odd-mode does not route to it.</p>
     <ul class="outside">${items}</ul>
   `;
 }
@@ -414,7 +414,7 @@ function reachableSkills(graph: Graph): GraphNode[] {
       (node) =>
         !node.outside &&
         node.kind === "skill" &&
-        node.id !== "skill:poteto-mode" &&
+        node.id !== "skill:odd-mode" &&
         node.id !== "skill:figure-it-out",
     )
     .sort((a, b) => a.name.localeCompare(b.name));

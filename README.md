@@ -1,6 +1,6 @@
-# pstack paths
+# odd-stack paths
 
-Read-only view of every `/poteto-mode` branch. The page parses the skill, playbook, agent, and guide files in this repo. It does not edit them.
+Read-only view of every `/odd-mode` branch. The page parses the skill, playbook, agent, and guide files in this repo. It does not edit them.
 
 ## Run
 
