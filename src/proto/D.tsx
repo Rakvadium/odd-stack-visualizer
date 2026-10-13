@@ -78,7 +78,7 @@ function DPath({ flowKey }: { flowKey: EntityKey }) {
           <p className="a-when">
             <span>Picked when</span> {plain(whenOf(stack, flowKey) || stack.entities.get(flowKey)!.summary)}
           </p>
-          {example && <p className="a-example">“{example.prompt.replace(/^\/poteto-mode\s*/, "")}”</p>}
+          {example && <p className="a-example">“{example.prompt.replace(/^\/odd-mode\s*/, "")}”</p>}
         </header>
 
         <div ref={mapRef}>

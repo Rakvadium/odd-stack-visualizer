@@ -43,10 +43,10 @@ function COverview() {
   const { stack, setPath, open } = useProto();
   return (
     <article className="c-doc">
-      <p className="eyebrow">poteto-mode</p>
+      <p className="eyebrow">odd-mode</p>
       <h1>How a request finds its path</h1>
       <p className="c-lede">
-        You type <code>/poteto-mode</code> and a request. poteto-mode reads it, picks the one playbook that fits, copies that playbook's steps
+        You type <code>/odd-mode</code> and a request. odd-mode reads it, picks the one playbook that fits, copies that playbook's steps
         into a todo list, and works through them. Each step can call other skills, which have steps of their own.
       </p>
 

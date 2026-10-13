@@ -177,7 +177,7 @@ function Header({ flowKey, leave, walk }: { flowKey: EntityKey | null; leave: (t
     return (
       <header className="e-head">
         <h1>Where does a request go?</h1>
-        <p>Your prompt goes into poteto-mode, which wires it to one path. Click a path to step inside it.</p>
+        <p>Your prompt goes into odd-mode, which wires it to one path. Click a path to step inside it.</p>
       </header>
     );
   const group = groupOf(flowKey);
@@ -197,7 +197,7 @@ function Header({ flowKey, leave, walk }: { flowKey: EntityKey | null; leave: (t
       </nav>
       <h1>{nameOf(stack, flowKey)}</h1>
       <p>{plain(whenOf(stack, flowKey) || stack.entities.get(flowKey)!.summary)}</p>
-      {example && <p className="e-example">“{example.prompt.replace(/^\/poteto-mode\s*/, "")}”</p>}
+      {example && <p className="e-example">“{example.prompt.replace(/^\/odd-mode\s*/, "")}”</p>}
       <div className="e-actions">
         <button className="e-read" onClick={walk}>
           Walk through it <Icon name="arrow" size={12} />
@@ -384,4 +384,3 @@ function Canvas({ flowKey, enter, back, target, expanded, setExpanded }: CanvasP
     </CanvasCtx.Provider>
   );
 }
-

@@ -69,88 +69,88 @@ export interface Example {
 export const EXAMPLES: Partial<Record<EntityKey, Example>> = {
   "playbook:investigation": {
     prompt:
-      "/poteto-mode investigate why background jobs time out every few hours. give me what we know, what data you used, and your best hypotheses. don't change any code yet.",
+      "/odd-mode investigate why background jobs time out every few hours. give me what we know, what data you used, and your best hypotheses. don't change any code yet.",
     source: "docs/guide/03-understand.md",
   },
   "playbook:session-pickup": {
     prompt:
-      "/poteto-mode take over this branch. read the decision log, figure out what's done, and continue from there. don't redo finished work.",
+      "/odd-mode take over this branch. read the decision log, figure out what's done, and continue from there. don't redo finished work.",
     source: "docs/guide/03-understand.md",
   },
   "playbook:trace-forensics": {
     prompt:
-      "/poteto-mode here's a cpuprofile from the slow startup. tell me where the time goes and which source lines own it. no fix yet.",
+      "/odd-mode here's a cpuprofile from the slow startup. tell me where the time goes and which source lines own it. no fix yet.",
     source: "docs/guide/05-build-and-clean.md",
   },
   "playbook:bug-fix": {
-    prompt: "/poteto-mode users get two notifications after a retry. repro first, then fix and verify.",
-    source: "docs/guide/02-poteto-mode.md",
+    prompt: "/odd-mode users get two notifications after a retry. repro first, then fix and verify.",
+    source: "docs/guide/02-odd-mode.md",
   },
   "playbook:perf-issue": {
-    prompt: "/poteto-mode startup takes 1.8s on this fixture. trace it, fix the measured cause, show me before and after.",
+    prompt: "/odd-mode startup takes 1.8s on this fixture. trace it, fix the measured cause, show me before and after.",
     source: "docs/guide/05-build-and-clean.md",
   },
   "playbook:feature": {
-    prompt: "/poteto-mode add a --json flag to this command. text output stays byte-identical. verify both.",
+    prompt: "/odd-mode add a --json flag to this command. text output stays byte-identical. verify both.",
     source: "docs/guide/01-setup.md",
   },
   "playbook:refactoring": {
     prompt:
-      "/poteto-mode move parsing into one module, zero behavior change. record the current output first and prove it's unchanged after.",
+      "/odd-mode move parsing into one module, zero behavior change. record the current output first and prove it's unchanged after.",
     source: "docs/guide/05-build-and-clean.md",
   },
   "playbook:prototype": {
-    prompt: "/poteto-mode prototype a few options for the new dropdown menu. take screenshots or videos for me to compare.",
+    prompt: "/odd-mode prototype a few options for the new dropdown menu. take screenshots or videos for me to compare.",
     source: "docs/guide/04-design.md",
   },
   "playbook:authoring-a-skill": {
-    prompt: "/poteto-mode write a skill for verifying database migrations in this repo",
+    prompt: "/odd-mode write a skill for verifying database migrations in this repo",
     source: "docs/guide/09-make-it-yours.md",
   },
   "playbook:eval": {
-    prompt: "/poteto-mode run the eval playbook on this skill change. same task for both variants, candidates stay blind.",
+    prompt: "/odd-mode run the eval playbook on this skill change. same task for both variants, candidates stay blind.",
     source: "docs/guide/09-make-it-yours.md",
   },
   "playbook:multi-phase-plan": {
-    prompt: "/poteto-mode turn this design into a plan. small verifiable PRs, each with its own verification steps.",
+    prompt: "/odd-mode turn this design into a plan. small verifiable PRs, each with its own verification steps.",
     source: "docs/guide/04-design.md",
   },
   "skill:figure-it-out": {
-    prompt: "/poteto-mode im stepping away. keep going until the migration check reports zero old callers. log your decisions.",
-    source: "docs/guide/02-poteto-mode.md",
+    prompt: "/odd-mode im stepping away. keep going until the migration check reports zero old callers. log your decisions.",
+    source: "docs/guide/02-odd-mode.md",
   },
   "playbook:autopilot-full": {
-    prompt: "/poteto-mode full autopilot on this queue. each item is independent. i want them merged by morning.",
+    prompt: "/odd-mode full autopilot on this queue. each item is independent. i want them merged by morning.",
     source: "docs/guide/07-overnight.md",
   },
   "playbook:autopilot-stack": {
-    prompt: "/poteto-mode autopilot these five changes but stack them, don't ship. i'll land the stack in the morning.",
+    prompt: "/odd-mode autopilot these five changes but stack them, don't ship. i'll land the stack in the morning.",
     source: "docs/guide/07-overnight.md",
   },
   "playbook:orchestrate": {
     prompt:
-      "/poteto-mode orchestrate the store migration. own it until every package is converted and merged. i'll check in twice a day.",
+      "/odd-mode orchestrate the store migration. own it until every package is converted and merged. i'll check in twice a day.",
     source: "docs/guide/07-overnight.md",
   },
   "playbook:opening-a-pr": {
-    prompt: "/poteto-mode open the pr. small ordered commits, evidence in the description.",
+    prompt: "/odd-mode open the pr. small ordered commits, evidence in the description.",
     source: "docs/guide/06-verify-and-ship.md",
   },
   "playbook:babysit": {
-    prompt: "/poteto-mode babysit this pr. get it green.",
+    prompt: "/odd-mode babysit this pr. get it green.",
     source: "docs/guide/06-verify-and-ship.md",
   },
   "playbook:shipping": {
-    prompt: "/poteto-mode land the stack.",
+    prompt: "/odd-mode land the stack.",
     source: "docs/guide/06-verify-and-ship.md",
   },
   "playbook:worktree-cleanup": {
-    prompt: "/poteto-mode what's eating my disk? prune the worktrees that are safe to prune.",
-    source: "docs/guide/02-poteto-mode.md",
+    prompt: "/odd-mode what's eating my disk? prune the worktrees that are safe to prune.",
+    source: "docs/guide/02-odd-mode.md",
   },
 };
 
-/** Routes poteto-mode checks before ordinary intent matching, each traced to its sentence in SKILL.md. */
+/** Routes odd-mode checks before ordinary intent matching, each traced to its sentence in SKILL.md. */
 export interface Override {
   when: string;
   target: EntityKey;
@@ -253,36 +253,36 @@ export const TOOLS: Tool[] = [
   {
     id: "watch-pr",
     name: "watch-pr",
-    origin: "poteto-mode script",
+    origin: "odd-mode script",
     summary: "Polls a GitHub PR or stack and emits a merge verdict (READY, WAITING, ADVANCE, COMPLETE).",
-    path: "skills/poteto-mode/scripts/watch-pr/cli.ts",
+    path: "skills/odd-mode/scripts/watch-pr/cli.ts",
     aliases: ["watch-pr", "scripts/watch-pr/watch-pr"],
     plain: ["(?<![\\w/-])scripts/watch-pr/watch-pr"],
   },
   {
     id: "check-plan",
     name: "check-plan.mjs",
-    origin: "poteto-mode script",
+    origin: "odd-mode script",
     summary: "Lints a multi-phase plan file against the required skeleton.",
-    path: "skills/poteto-mode/scripts/check-plan.mjs",
+    path: "skills/odd-mode/scripts/check-plan.mjs",
     aliases: ["check-plan.mjs"],
     plain: ["check-plan\\.mjs"],
   },
   {
     id: "worktree-audit",
     name: "worktree-audit.sh",
-    origin: "poteto-mode script",
+    origin: "odd-mode script",
     summary: "Classifies every git worktree by size, age, merge state, uncommitted work, and recent chats.",
-    path: "skills/poteto-mode/scripts/worktree-audit.sh",
+    path: "skills/odd-mode/scripts/worktree-audit.sh",
     aliases: ["scripts/worktree-audit.sh", "worktree-audit.sh"],
     plain: ["worktree-audit\\.sh"],
   },
   {
     id: "orch",
     name: "orch",
-    origin: "poteto-mode script",
+    origin: "odd-mode script",
     summary: "Bookkeeping CLI for Orchestrate's store: units, ledger, inbox, frontier.",
-    path: "skills/poteto-mode/scripts/orch/orch.ts",
+    path: "skills/odd-mode/scripts/orch/orch.ts",
     aliases: ["orch", "scripts/orch/orch.ts"],
     plain: ["scripts/orch/orch\\.ts"],
   },

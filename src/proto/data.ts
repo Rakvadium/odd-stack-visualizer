@@ -3,7 +3,7 @@ import { firstSentence } from "../model/markdown";
 import type { Stack } from "../model/stack";
 import type { EntityKey, Flow, Kind } from "../model/types";
 
-export const ROOT: EntityKey = "skill:poteto-mode";
+export const ROOT: EntityKey = "skill:odd-mode";
 export const ROUTES: EntityKey[] = GROUPS.flatMap((g) => g.members);
 
 export const KIND_LABEL: Record<Kind, string> = {

@@ -28,7 +28,7 @@ const flow = (key: string) => {
 const stepRefs = (key: string, step: number) => flow(key).stations[step - 1].refs;
 
 describe("routing", () => {
-  it("reads every playbook route from poteto-mode", () => {
+  it("reads every playbook route from odd-mode", () => {
     expect(stack.routes).toHaveLength(23);
     for (const route of stack.routes) expect(flow(route.key).stations.length).toBeGreaterThan(0);
   });
@@ -121,8 +121,8 @@ describe("skills", () => {
   });
 
   it("does not read plain-English 'how' as the how skill", () => {
-    expect(stack.lexicon.refs("how does X work, why was Y built", "skills/poteto-mode")).toEqual([]);
-    expect(stack.lexicon.refs("Route through the **how** skill.", "skills/poteto-mode")).toEqual(["skill:how"]);
+    expect(stack.lexicon.refs("how does X work, why was Y built", "skills/odd-mode")).toEqual([]);
+    expect(stack.lexicon.refs("Route through the **how** skill.", "skills/odd-mode")).toEqual(["skill:how"]);
   });
 });
 

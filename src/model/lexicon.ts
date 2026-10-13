@@ -14,7 +14,7 @@ interface PlainPattern {
 }
 
 /**
- * Resolves the ways the pstack sources name a skill, principle, playbook, tool, agent, or doc.
+ * Resolves the ways the oddstack sources name a skill, principle, playbook, tool, agent, or doc.
  * Markup (bold, code, slash commands) is matched exactly. Plain prose only matches names that
  * cannot be ordinary English, so "how" in a sentence stays a word while `how` is the skill.
  */
@@ -52,7 +52,7 @@ export class Lexicon {
     const text = raw.trim();
     const doc = this.resolveDoc(text, base);
     if (doc) return doc;
-    const playbookPath = /^(?:\.\.\/)?(?:pstack\/skills\/poteto-mode\/)?playbooks\/([\w-]+)\.md$/.exec(text);
+    const playbookPath = /^(?:\.\.\/)?(?:oddstack\/skills\/odd-mode\/)?playbooks\/([\w-]+)\.md$/.exec(text);
     if (playbookPath) return `playbook:${playbookPath[1]}`;
     return this.exact.get(normalize(text)) ?? null;
   }

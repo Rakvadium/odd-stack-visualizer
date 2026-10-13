@@ -38,8 +38,8 @@ export interface Stack {
   lexicon: Lexicon;
 }
 
-const MODE_PATH = "skills/poteto-mode/SKILL.md";
-const PLAYBOOK_DIR = "skills/poteto-mode/playbooks";
+const MODE_PATH = "skills/odd-mode/SKILL.md";
+const PLAYBOOK_DIR = "skills/odd-mode/playbooks";
 
 export function buildStack(files: SourceFile[]): Stack {
   const byPath = new Map(files.map((f) => [f.path, f.text]));
@@ -262,7 +262,7 @@ function parsePrinciples(blocks: Block[], lexicon: Lexicon): Principle[] {
     for (const item of block.items) {
       const m = /^\*\*(.+?)\*\*\s*\(\*\*(principle-[\w-]+)\*\*\)\.\s*([\s\S]*)$/.exec(item.text);
       if (!m) continue;
-      const key = lexicon.resolve(m[2], "skills/poteto-mode") ?? (`principle:${m[2]}` as EntityKey);
+      const key = lexicon.resolve(m[2], "skills/odd-mode") ?? (`principle:${m[2]}` as EntityKey);
       out.push({ key, name: m[1], group, when: m[3].trim() });
     }
   }
@@ -279,7 +279,7 @@ function parseTriggers(blocks: Block[], lexicon: Lexicon): Trigger[] {
       out.push({
         when: action ? when : "",
         then: action || when,
-        refs: lexicon.refs(item.text, "skills/poteto-mode"),
+        refs: lexicon.refs(item.text, "skills/odd-mode"),
       });
     }
   }

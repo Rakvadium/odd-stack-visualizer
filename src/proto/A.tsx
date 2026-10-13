@@ -26,7 +26,7 @@ export function AOverview() {
       <header className="a-intro">
         <h1>Where does a request go?</h1>
         <p>
-          You type <code>/poteto-mode</code> and a request. It picks <b>one</b> of these {GROUPS.flatMap((g) => g.members).length} paths by
+          You type <code>/odd-mode</code> and a request. It picks <b>one</b> of these {GROUPS.flatMap((g) => g.members).length} paths by
           what you are asking for. No keywords needed. Click a path to follow it.
         </p>
       </header>
@@ -37,14 +37,14 @@ export function AOverview() {
             <span className="eyebrow">
               <Icon name="chat" size={12} /> You type
             </span>
-            <span className="a-prompt-text">/poteto-mode users get two notifications after a retry. repro first, then fix.</span>
+            <span className="a-prompt-text">/odd-mode users get two notifications after a retry. repro first, then fix.</span>
           </div>
           <div className="a-hub" data-node="hub">
             <span className="a-hub-icon">
               <Icon name="crown" size={18} />
             </span>
             <span>
-              <b>poteto-mode</b>
+              <b>odd-mode</b>
               <small>reads it and picks one path</small>
             </span>
           </div>
@@ -83,7 +83,7 @@ export function AOverview() {
         <span className="a-bolt">
           <Icon name="bolt" size={11} />
         </span>
-        Shortcut. poteto-mode checks these first, like "check on PR 12" going straight to Babysit.
+        Shortcut. odd-mode checks these first, like "check on PR 12" going straight to Babysit.
       </p>
     </div>
   );
@@ -111,7 +111,7 @@ function APath({ flowKey }: { flowKey: EntityKey }) {
         <p className="a-when">
           <span>Picked when</span> {plain(whenOf(stack, flowKey) || stack.entities.get(flowKey)!.summary)}
         </p>
-        {example && <p className="a-example">“{example.prompt.replace(/^\/poteto-mode\s*/, "")}”</p>}
+        {example && <p className="a-example">“{example.prompt.replace(/^\/odd-mode\s*/, "")}”</p>}
         <button className="a-read" onClick={() => open({ t: "step", flow: flowKey, index: 0 })}>
           Read it start to finish <Icon name="arrow" size={13} />
         </button>
@@ -165,7 +165,7 @@ export function Track({ flowKey, onStep, active }: { flowKey: EntityKey; onStep:
                   <span className="a-dot is-cap" data-node="start">
                     <Icon name="crown" size={14} />
                   </span>
-                  <span className="a-st-label">poteto-mode routes here</span>
+                  <span className="a-st-label">odd-mode routes here</span>
                 </div>
               );
             if (it.kind === "end")

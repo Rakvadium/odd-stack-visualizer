@@ -45,7 +45,7 @@ function PromptNode() {
         <Icon name="chat" size={14} /> You type
       </header>
       <div className="n-field">
-        /poteto-mode users get two notifications after a retry. repro first, then fix.
+        /odd-mode users get two notifications after a retry. repro first, then fix.
         <span className="n-caret" />
       </div>
       <Port type="source" position={Position.Bottom} />
@@ -65,7 +65,7 @@ function RouterNode() {
         <span className="n-crown">
           <Icon name="crown" size={14} />
         </span>
-        poteto-mode
+        odd-mode
       </header>
       <p className="n-sub is-center">Reads the request and wires it to the one path that fits.</p>
       <div className="n-ports">
@@ -174,7 +174,7 @@ function EntryNode({ data }: NodeProps<GNode>) {
   const routed = kindOf(data.flow) === "playbook" || data.flow === "skill:figure-it-out";
   return (
     <div className="n n-entry">
-      <Icon name={routed ? "crown" : "arrow"} size={13} /> {routed ? "poteto-mode routes here" : "A step calls this"}
+      <Icon name={routed ? "crown" : "arrow"} size={13} /> {routed ? "odd-mode routes here" : "A step calls this"}
       <Port type="source" position={Position.Right} id="next" />
     </div>
   );

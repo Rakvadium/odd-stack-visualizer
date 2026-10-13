@@ -138,7 +138,7 @@ function EntityDoc({ entityKey }: { entityKey: EntityKey }) {
   const hasSteps = !!flow && flow.stations.length > 0;
   const [full, setFull] = useState(!hasSteps);
   const users = usersOf(stack, entityKey);
-  const base = entity.path ? dirOf(entity.path) : "skills/poteto-mode";
+  const base = entity.path ? dirOf(entity.path) : "skills/odd-mode";
   const lede = flow?.intro.find((s) => !s.title)?.body;
 
   return (
@@ -150,7 +150,7 @@ function EntityDoc({ entityKey }: { entityKey: EntityKey }) {
       <h2 className="doc-title">{nameOf(stack, entityKey)}</h2>
       {principle && (
         <p className="doc-when">
-          <b>Use when</b> <Inline text={principle.when} base="skills/poteto-mode" />
+          <b>Use when</b> <Inline text={principle.when} base="skills/odd-mode" />
         </p>
       )}
       <p className="doc-lede">{principle ? entity.summary : gistOf(stack, entityKey) || entity.summary}</p>
@@ -195,7 +195,7 @@ function EntityDoc({ entityKey }: { entityKey: EntityKey }) {
           {full && <Md text={splitFrontmatter(entity.source).body.replace(/^#\s.*\n/, "")} base={base} className="doc-body" />}
         </section>
       )}
-      {!entity.source && !hasSteps && <p className="doc-muted">pstack calls this but does not define it in this repo.</p>}
+      {!entity.source && !hasSteps && <p className="doc-muted">oddstack calls this but does not define it in this repo.</p>}
 
       {users.length > 0 && (
         <footer className="doc-used">
@@ -216,7 +216,7 @@ function AlwaysDoc() {
   const groups = [...new Set(stack.principles.map((p) => p.group))];
   return (
     <div className="doc">
-      <p className="doc-kicker">poteto-mode</p>
+      <p className="doc-kicker">odd-mode</p>
       <h2 className="doc-title">Always on</h2>
       <p className="doc-lede">
         These hold on every path. A trigger fires the moment its situation comes up, whatever step the agent is on. A principle applies whenever
@@ -228,10 +228,10 @@ function AlwaysDoc() {
           {stack.triggers.map((t, i) => (
             <li key={i}>
               <span className="trig-if">
-                <Inline text={t.when || "Always"} base="skills/poteto-mode" />
+                <Inline text={t.when || "Always"} base="skills/odd-mode" />
               </span>
               <span className="trig-then">
-                <Inline text={t.then.split(/(?<=\.)\s/)[0]} base="skills/poteto-mode" />
+                <Inline text={t.then.split(/(?<=\.)\s/)[0]} base="skills/odd-mode" />
               </span>
             </li>
           ))}

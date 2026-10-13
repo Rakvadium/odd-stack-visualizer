@@ -69,7 +69,7 @@ const GROUP_W = PAD * 2 + PER_ROW * CARD_W + (PER_ROW - 1) * GAP;
 const ROUTER_W = 440;
 const HUB_GAP = 150;
 
-/** poteto-mode as a hub: your prompt flows in from above, intent groups branch out to both sides. */
+/** odd-mode as a hub: your prompt flows in from above, intent groups branch out to both sides. */
 export function overviewGraph(): { nodes: GNode[]; edges: GEdge[] } {
   const nodes: GNode[] = [];
   const edges: GEdge[] = [];

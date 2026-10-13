@@ -111,10 +111,10 @@ function BStart() {
   const { setIntent, open, stack } = useProto();
   return (
     <div className="b-start">
-      <p className="eyebrow">poteto-mode, one question at a time</p>
+      <p className="eyebrow">odd-mode, one question at a time</p>
       <h1>What do you want the agent to do?</h1>
       <p className="b-sub">
-        When you type <code>/poteto-mode</code> and a request, it works out which kind of request it is, then runs the one path that fits. Start
+        When you type <code>/odd-mode</code> and a request, it works out which kind of request it is, then runs the one path that fits. Start
         the same way.
       </p>
       <div className="b-tiles">
@@ -151,7 +151,7 @@ function BPick({ intent }: { intent: string }) {
         </span>
         {group.title}
       </h1>
-      <p className="b-sub">{group.members.length > 1 ? `poteto-mode picks one of these ${group.members.length} by what you describe.` : group.blurb}</p>
+      <p className="b-sub">{group.members.length > 1 ? `odd-mode picks one of these ${group.members.length} by what you describe.` : group.blurb}</p>
       <div className="b-cards">
         {group.members.map((k) => {
           const flow = stack.flows.get(k)!;
@@ -172,7 +172,7 @@ function BPick({ intent }: { intent: string }) {
               <span className="b-card-when">
                 <b>Pick this when</b> {plain(whenOf(stack, k))}
               </span>
-              {ex && <span className="b-card-ex">“{ex.prompt.replace(/^\/poteto-mode\s*/, "")}”</span>}
+              {ex && <span className="b-card-ex">“{ex.prompt.replace(/^\/odd-mode\s*/, "")}”</span>}
               <span className="b-card-steps">
                 {flow.stations.map((s, i) => (
                   <span key={i}>{s.short}</span>
