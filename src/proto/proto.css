@@ -255,6 +255,8 @@ h1, h2, h3, h4 { text-wrap: balance; }
   transition: opacity 0.12s, transform 0.12s;
 }
 
+.a-pill[data-tip="end"] .tip { left: auto; right: 0; }
+
 .a-pill:hover .tip { opacity: 1; transform: none; transition-delay: 0.25s; }
 
 .a-bolt {
