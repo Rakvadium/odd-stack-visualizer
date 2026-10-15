@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { EXAMPLES, GROUPS, OVERRIDES } from "./curated";
 import { buildStack, type SourceFile } from "./stack";
 
-const repo = resolve(__dirname, "../../..");
+const repo = resolve(__dirname, "../../odd-stack");
 
 function walk(dir: string): string[] {
   return readdirSync(dir).flatMap((name) => {

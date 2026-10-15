@@ -10,7 +10,7 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --port 4173",
     "pretest": "node scripts/fetch-odd-stack.mjs",
-    "test": "vitest run"
+    "test": "vitest run --dir src"
   },
   "devDependencies": {
     "@types/node": "^26.6.4",
