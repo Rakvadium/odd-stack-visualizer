@@ -64,7 +64,7 @@ export function AOverview() {
               </div>
               <div className="a-pills">
                 {g.members.map((k) => (
-                  <button key={k} className="a-pill" onClick={() => setPath(k)}>
+                  <button key={k} className="a-pill" onMouseEnter={(e) => alignTip(e.currentTarget)} onClick={() => setPath(k)}>
                     {isOverride(k) && (
                       <span className="a-bolt" title="Checked before the rest">
                         <Icon name="bolt" size={11} />
@@ -87,6 +87,13 @@ export function AOverview() {
       </p>
     </div>
   );
+}
+
+/** End-aligns a pill's tip when a start-aligned one would run past the map's right edge. */
+function alignTip(pill: HTMLElement) {
+  const tip = pill.querySelector<HTMLElement>(".tip")!;
+  const edge = pill.closest(".a-overview")!.getBoundingClientRect().right;
+  pill.dataset.tip = pill.getBoundingClientRect().left + tip.offsetWidth > edge ? "end" : "start";
 }
 
 const STATION_W = 184;

@@ -233,7 +233,7 @@ h1, h2, h3, h4 { text-wrap: balance; }
   transition: transform 0.12s, box-shadow 0.12s;
 }
 
-.a-pill:hover { transform: translateY(-1px); box-shadow: var(--shadow-md), 0 0 0 1.5px var(--ink); }
+.a-pill:hover { z-index: 1; transform: translateY(-1px); box-shadow: var(--shadow-md), 0 0 0 1.5px var(--ink); }
 
 .a-pill .tip {
   position: absolute;
@@ -254,6 +254,8 @@ h1, h2, h3, h4 { text-wrap: balance; }
   pointer-events: none;
   transition: opacity 0.12s, transform 0.12s;
 }
+
+.a-pill[data-tip="end"] .tip { left: auto; right: 0; }
 
 .a-pill:hover .tip { opacity: 1; transform: none; transition-delay: 0.25s; }
 
