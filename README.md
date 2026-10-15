@@ -1,6 +1,6 @@
 # odd-mode paths
 
-A read-only visualizer for every path `/odd-mode` can take. It reads the skill, playbook, and agent markdown in this repo at build time, so editing a playbook updates the app.
+A read-only visualizer for every path `/odd-mode` can take. It reads the skill, playbook, and agent markdown from [odd-stack](https://github.com/Rakvadium/odd-stack) `main` at build time, so the next build after a playbook edit picks it up.
 
 This is a prototype stage. A switcher at the bottom compares four directions:
 
@@ -17,13 +17,16 @@ npm test
 npm run dev
 ```
 
+`npm test` and `npm run dev` download `skills/` and `agents/` from odd-stack `main` into `odd-stack/` the first time. Run `npm run fetch` to pull the latest. `npm run build` always pulls the latest.
+
 Open http://localhost:5173. Keys `1` to `4` switch prototypes. On the canvas, `esc` goes back a level.
 
 ## Where things live
 
 - `src/model/` parses the markdown into paths and is covered by tests. `curated.ts` holds the few facts the markdown lacks: intent groups, example prompts, short step labels, and outside tools.
 - `src/proto/` holds the prototypes. `E/` is the canvas.
+- `scripts/fetch-odd-stack.mjs` downloads the markdown. `odd-stack/` is gitignored.
 
 ## Deploy
 
-`vercel.json` at the repo root builds this folder. Deploy from the repo root, since the build reads `skills/` and `agents/`.
+The `odd-stack-visualizer` Vercel project builds every push with the Vite preset. A push to odd-stack does not redeploy this app. Redeploy, or push here, to pick up playbook edits.
