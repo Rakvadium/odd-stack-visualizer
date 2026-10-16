@@ -1,3 +1,4 @@
 dist/
 odd-stack/
 odd-stack.partial/
+node_modules/

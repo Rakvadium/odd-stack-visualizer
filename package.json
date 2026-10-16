@@ -1,15 +1,16 @@
 {
   "name": "oddstack-path-visualizer",
   "private": true,
+  "packageManager": "bun@1.3.0",
   "type": "module",
   "scripts": {
-    "fetch": "node scripts/fetch-odd-stack.mjs --refresh",
-    "predev": "node scripts/fetch-odd-stack.mjs",
+    "fetch": "bun scripts/fetch-odd-stack.mjs --refresh",
+    "predev": "bun scripts/fetch-odd-stack.mjs",
     "dev": "vite --port 5173",
-    "prebuild": "node scripts/fetch-odd-stack.mjs --refresh",
+    "prebuild": "bun scripts/fetch-odd-stack.mjs --refresh",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --port 4173",
-    "pretest": "node scripts/fetch-odd-stack.mjs",
+    "pretest": "bun scripts/fetch-odd-stack.mjs",
     "test": "vitest run --dir src"
   },
   "devDependencies": {
