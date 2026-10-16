@@ -12,12 +12,12 @@ This is a prototype stage. A switcher at the bottom compares four directions:
 ## Run
 
 ```bash
-npm install
-npm test
-npm run dev
+bun install
+bun run test
+bun run dev
 ```
 
-`npm test` and `npm run dev` download `skills/` and `agents/` from odd-stack `main` into `odd-stack/` the first time. Run `npm run fetch` to pull the latest. `npm run build` always pulls the latest.
+`bun run test` and `bun run dev` download `skills/` and `agents/` from odd-stack `main` into `odd-stack/` the first time. Run `bun run fetch` to pull the latest. `bun run build` always pulls the latest. Tests must run through `bun run test` because `bun test` is bun's own runner.
 
 Open http://localhost:5173. Keys `1` to `4` switch prototypes. On the canvas, `esc` goes back a level.
 
@@ -29,4 +29,4 @@ Open http://localhost:5173. Keys `1` to `4` switch prototypes. On the canvas, `e
 
 ## Deploy
 
-The `odd-stack-visualizer` Vercel project builds every push with the Vite preset. A push to odd-stack does not redeploy this app. Redeploy, or push here, to pick up playbook edits.
+The `odd-stack-visualizer` Vercel project builds every push with the Vite preset. A push to odd-stack does not redeploy this app. Redeploy, or push here, to pick up playbook edits. `vercel.json` makes Vercel install and build with bun.
