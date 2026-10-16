@@ -58,7 +58,7 @@ describe("playbook steps", () => {
     expect(bugFix.owns).toBe("You own this task. Plan, review, verify");
     expect(bugFix.stations.map((s) => s.label)).toEqual(["1", "2", "3", "4", "5", "6"]);
     expect(stepRefs("playbook:bug-fix", 2)).toEqual(["skill:how", "skill:why", "tool:loop"]);
-    expect(stepRefs("playbook:bug-fix", 5)).toEqual(["skill:tdd", "principle:principle-sequence-verifiable-units"]);
+    expect(stepRefs("playbook:bug-fix", 3)).toEqual(["skill:tdd", "principle:principle-sequence-verifiable-units"]);
     expect(stepRefs("playbook:bug-fix", 6)).toEqual(["playbook:opening-a-pr"]);
     expect(bugFix.reply).toMatch(/^what was broken, root cause/);
   });
@@ -78,13 +78,18 @@ describe("playbook steps", () => {
     expect(flow("playbook:opening-a-pr").stations.map((s) => s.title)).toEqual([
       "Worktree",
       "Commits",
+      "Branches",
       "PRs",
       "Titles",
       "Descriptions",
       "Forge",
+      "Remotes",
       "Built-in PR tool",
       "Size and stacks",
       "Readiness",
+      "Deploys",
+      "Done",
+      "No checks configured",
       "Babysit",
     ]);
   });
